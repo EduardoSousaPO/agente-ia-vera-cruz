@@ -5,6 +5,11 @@
 - Supabase (Auth + Postgres)
 - Vercel Functions em `/api/*`
 
+## Frontend (layout)
+- Design do Mini-CRM inspirado em Notion + Asana.
+- Shell autenticado com sidebar e páginas padronizadas (`Leads`, `Detalhe`, `Métricas`).
+- Tokens e componentes visuais centralizados em `src/styles.css`.
+
 ## Variáveis de ambiente
 
 Copie `.env.example` para `.env` e preencha:

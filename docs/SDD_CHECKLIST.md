@@ -17,6 +17,7 @@ Saída: PRD.md
 - Arquivo por arquivo
 - CREATE/MODIFY
 - Sem ambiguidade
+- Em mudanças visuais: documentar design system, páginas afetadas e responsividade
 Saída: SPEC.md
 
 ## /clear
@@ -25,3 +26,4 @@ Saída: SPEC.md
 - Executar SPEC
 - Criar/modificar só arquivos listados
 - Se erro: corrigir só o erro
+- Em UI: validar desktop e mobile

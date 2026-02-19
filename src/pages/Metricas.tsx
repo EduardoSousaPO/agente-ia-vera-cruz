@@ -17,6 +17,11 @@ export default function Metricas() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
+
     supabase
       .from('leads')
       .select('id, created_at, qualified_at, handoff_at, seller_first_action_at, lead_stage, lead_model_interest')
@@ -26,7 +31,7 @@ export default function Metricas() {
       });
   }, []);
 
-  if (loading) return <div style={{ padding: 24 }}>Carregando…</div>;
+  if (loading) return <div className="loading-wrap">Carregando…</div>;
 
   const comQualificacao = leads.filter((l) => l.qualified_at);
   const comHandoff = leads.filter((l) => l.handoff_at);
@@ -60,48 +65,57 @@ export default function Metricas() {
   });
 
   return (
-    <div style={{ padding: 24, maxWidth: 800, margin: '0 auto' }}>
-      <nav style={{ marginBottom: 24 }}>
-        <Link to="/leads">Leads</Link> | <Link to="/metricas">Métricas</Link>
-      </nav>
-      <h1>Métricas</h1>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 16, marginBottom: 32 }}>
-        <div style={{ padding: 16, border: '1px solid #ddd', borderRadius: 8 }}>
-          <div style={{ fontSize: 14, color: '#666' }}>Tempo até qualificação (média)</div>
-          <div style={{ fontSize: 24, fontWeight: 'bold' }}>
-            {mediaTempoQualificacao.toFixed(0)} min
-          </div>
+    <div>
+      <header className="topbar">
+        <div>
+          <h1 className="page-title">Métricas</h1>
+          <p className="page-subtitle">SLA de qualificação, ação comercial e desempenho do funil.</p>
         </div>
-        <div style={{ padding: 16, border: '1px solid #ddd', borderRadius: 8 }}>
-          <div style={{ fontSize: 14, color: '#666' }}>Tempo até 1º contato (média)</div>
-          <div style={{ fontSize: 24, fontWeight: 'bold' }}>
-            {mediaTempoPrimeiroContato.toFixed(0)} min
-          </div>
+        <Link to="/leads" className="action-link">
+          Ver leads
+        </Link>
+      </header>
+      <section className="panel section-gap">
+        <div className="panel-inner">
+      <div className="metric-grid">
+        <div className="metric-card">
+          <p className="metric-label">Tempo até qualificação (média)</p>
+          <p className="metric-value">{mediaTempoQualificacao.toFixed(0)} min</p>
         </div>
-        <div style={{ padding: 16, border: '1px solid #ddd', borderRadius: 8 }}>
-          <div style={{ fontSize: 14, color: '#666' }}>Conversão (vendidos / handoff)</div>
-          <div style={{ fontSize: 24, fontWeight: 'bold' }}>{conversao.toFixed(1)}%</div>
+        <div className="metric-card">
+          <p className="metric-label">Tempo até 1º contato (média)</p>
+          <p className="metric-value">{mediaTempoPrimeiroContato.toFixed(0)} min</p>
+        </div>
+        <div className="metric-card">
+          <p className="metric-label">Conversão (vendidos / handoff)</p>
+          <p className="metric-value">{conversao.toFixed(1)}%</p>
         </div>
       </div>
+        </div>
+      </section>
+      <section className="panel">
+        <div className="panel-inner">
       <h2>Leads por modelo</h2>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table className="data-table">
         <thead>
-          <tr style={{ borderBottom: '1px solid #ddd' }}>
-            <th style={{ textAlign: 'left', padding: 8 }}>Modelo</th>
-            <th style={{ textAlign: 'right', padding: 8 }}>Quantidade</th>
+          <tr>
+            <th>Modelo</th>
+            <th className="cell-num">Quantidade</th>
           </tr>
         </thead>
         <tbody>
           {Object.entries(porModelo)
             .sort((a, b) => b[1] - a[1])
             .map(([modelo, qtd]) => (
-              <tr key={modelo} style={{ borderBottom: '1px solid #eee' }}>
-                <td style={{ padding: 8 }}>{modelo}</td>
-                <td style={{ padding: 8, textAlign: 'right' }}>{qtd}</td>
+              <tr key={modelo}>
+                <td>{modelo}</td>
+                <td className="cell-num">{qtd}</td>
               </tr>
             ))}
         </tbody>
       </table>
+        </div>
+      </section>
     </div>
   );
 }

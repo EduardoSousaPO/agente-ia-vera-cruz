@@ -1,16 +1,37 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import supabase from './lib/supabase';
+import { Routes, Route, Navigate, NavLink, Outlet } from 'react-router-dom';
+import supabase, { isSupabaseConfigured } from './lib/supabase';
 import Login from './pages/Login';
 import LeadsList from './pages/LeadsList';
 import LeadDetail from './pages/LeadDetail';
 import Metricas from './pages/Metricas';
+
+function TelaConfigNecessaria() {
+  return (
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <h1>Vera Cruz — CRM Leads</h1>
+        <p className="muted">
+          Para o app funcionar, crie um arquivo <code>.env</code> na raiz do projeto com:
+        </p>
+        <pre className="code-block code-block--env">
+{`VITE_SUPABASE_URL=https://seu-projeto.supabase.co
+VITE_SUPABASE_ANON_KEY=sua-anon-key`}
+        </pre>
+        <p className="muted auth-card__hint">
+          Use os valores do projeto no dashboard do Supabase (Configurações → API). Depois reinicie o servidor (<code>npm run dev</code>).
+        </p>
+      </div>
+    </div>
+  );
+}
 
 function Protegida({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<boolean | null>(null);
 
   useEffect(() => {
+    if (!supabase) return;
     supabase.auth.getSession().then(({ data: { session: s } }) => {
       setSession(!!s);
       setLoading(false);
@@ -21,39 +42,60 @@ function Protegida({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return <div style={{ padding: 24 }}>Carregando…</div>;
+  if (loading) return <div className="loading-wrap">Carregando…</div>;
   if (!session) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
 
+function LayoutPrivado() {
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <h1>Vera Cruz CRM</h1>
+          <p>Pipeline comercial Effa</p>
+        </div>
+        <nav className="nav-links">
+          <NavLink
+            to="/leads"
+            className={({ isActive }) => `nav-link${isActive ? ' nav-link-active' : ''}`}
+          >
+            Leads
+          </NavLink>
+          <NavLink
+            to="/metricas"
+            className={({ isActive }) => `nav-link${isActive ? ' nav-link-active' : ''}`}
+          >
+            Métricas
+          </NavLink>
+        </nav>
+      </aside>
+      <main className="content">
+        <Outlet />
+      </main>
+    </div>
+  );
+}
+
 export default function App() {
+  if (!isSupabaseConfigured()) {
+    return <TelaConfigNecessaria />;
+  }
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route
-        path="/leads"
         element={
           <Protegida>
-            <LeadsList />
+            <LayoutPrivado />
           </Protegida>
         }
-      />
-      <Route
-        path="/leads/:id"
-        element={
-          <Protegida>
-            <LeadDetail />
-          </Protegida>
-        }
-      />
-      <Route
-        path="/metricas"
-        element={
-          <Protegida>
-            <Metricas />
-          </Protegida>
-        }
-      />
+      >
+        <Route path="/leads" element={<LeadsList />} />
+        <Route path="/leads/:id" element={<LeadDetail />} />
+        <Route path="/metricas" element={<Metricas />} />
+      </Route>
       <Route path="/" element={<Navigate to="/leads" replace />} />
     </Routes>
   );

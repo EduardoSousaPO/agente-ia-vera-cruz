@@ -16,3 +16,8 @@
 ## D4 — Handoff
 - Round‑robin via função SQL para evitar concorrência.
 - `handoff_short_id`: 6 caracteres (uppercase) derivado do UUID do lead.
+
+## D5 — Design system do frontend
+- O Mini-CRM adota direção visual inspirada em Notion + Asana para o MVP.
+- Implementação via tokens em CSS global (`src/styles.css`) e layout compartilhado (`sidebar + content`) no `src/App.tsx`.
+- Páginas `Login`, `LeadsList`, `LeadDetail` e `Metricas` seguem o mesmo sistema visual e responsivo.

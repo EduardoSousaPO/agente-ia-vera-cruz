@@ -1,6 +1,6 @@
 # Sprints — Vera Cruz Effa | Do início ao go-live
 
-Documento que detalha **passo a passo** do projeto, dividido em sprints. Use junto com **SDD.md**, **SPEC.md** e **PRD.md**.
+Documento que detalha **passo a passo** do projeto, dividido em sprints. Use junto com **SDD.md**, **SPEC.md**, **PRD.md** e **DESIGN_SYSTEM.md** (frontend).
 
 ---
 
@@ -8,6 +8,7 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 
 - [x] Chat 1 (Pesquisa) e Chat 2 (SPEC) concluídos  
 - [x] Chat 3 (Implementação) — código DB, API e frontend  
+- [x] Refresh visual do frontend (layout e design system Notion + Asana)  
 - [x] Migrations aplicadas no Supabase (projeto `nwhzcvdsfcioepxucrfr`)  
 
 ### Próximo passo imediato
@@ -24,6 +25,7 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 | 1      | Pesquisa + SPEC         | **Concluído** | Chat 1 + Chat 2 (lista fechada de arquivos) |
 | 2      | Banco de dados          | **Concluído** | Migrations e aplicação no Supabase          |
 | 3      | Implementação (código) | **Concluído** | Chat 3 — API + frontend conforme SPEC       |
+| 3.1    | Refresh de design UI    | **Concluído** | Layout e design system do Mini-CRM          |
 | 4      | Deploy e integração     | **Pendente**  | Vercel, env, SuperAgentes (HTTP + WhatsApp) |
 | 5      | Validação e go-live     | **Pendente**  | Testes, Magic Link, comandos, métricas      |
 
@@ -160,6 +162,24 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 
 ---
 
+## Sprint 3.1 — Refresh de design (Mini-CRM)
+
+**Status:** Concluído
+
+**O que já foi feito:**
+- [x] Layout base autenticado com sidebar + conteúdo no `src/App.tsx`.
+- [x] Design system com tokens e componentes globais em `src/styles.css`.
+- [x] Páginas `Login`, `LeadsList`, `LeadDetail` e `Metricas` atualizadas para o novo padrão visual.
+- [x] Tipografia do app carregada em `index.html`.
+- [x] Responsividade aplicada para desktop e mobile.
+- [x] Build validado com sucesso (`npm run build`).
+
+**Objetivo:** elevar a usabilidade e consistência visual mantendo o escopo MVP.
+
+**Critério de conclusão:** todas as páginas do frontend no novo layout, com build ok.
+
+---
+
 ## Sprint 4 — Deploy e integração
 
 **Status:** Pendente  
@@ -250,6 +270,7 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 | 3 | **SPEC** — Chat 2: lista fechada CREATE/MODIFY em SPEC.md. | Concluído |
 | 4 | **Banco** — Migrations no repo e aplicação no Supabase. | Concluído |
 | 5 | **Código** — Chat 3: API + frontend conforme SPEC; build e lint ok. | Concluído |
+| 5.1 | **UI Refresh** — design system e layout Notion + Asana no frontend. | Concluído |
 | 6 | **Deploy** — Vercel (env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRM_API_KEY). | Pendente |
 | 7 | **SuperAgentes** — HTTP Tool (base URL + X-CRM-API-KEY), conhecimento Effa, Evolution QR. | Pendente |
 | 8 | **Validação** — Auth, fluxo lead, handoff, comandos vendedor, métricas. | Pendente |
@@ -264,6 +285,7 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 | `docs/PRD.md` | Escopo, requisitos, integração SuperAgentes. |
 | `docs/SDD.md` | Workflow (Chat 1 → 2 → 3); regra “SPEC antes de código”. |
 | `docs/SPEC.md` | Lista fechada de arquivos; só implementar o que está listado. |
+| `docs/DESIGN_SYSTEM.md` | Tipografia, cores, espaçamento, layout e componentes (referência Asana). |
 | `docs/DATABASE_SCHEMA.md` | Tabelas, colunas, função round-robin. |
 | `docs/API_CONTRACT.md` | Endpoints e header X-CRM-API-KEY. |
 | `docs/DECISIONS.md` | Decisões técnicas (rotas, segurança, handoff). |

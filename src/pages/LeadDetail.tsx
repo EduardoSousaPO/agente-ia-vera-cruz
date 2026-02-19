@@ -37,7 +37,7 @@ export default function LeadDetail() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
+    if (!id || !supabase) return;
     supabase
       .from('leads')
       .select('*')
@@ -60,9 +60,11 @@ export default function LeadDetail() {
 
   if (loading || !lead) {
     return (
-      <div style={{ padding: 24 }}>
-        <Link to="/leads">← Voltar</Link>
-        <p>Carregando…</p>
+      <div className="panel">
+        <div className="panel-inner">
+        <Link to="/leads" className="action-link">← Voltar</Link>
+        <p className="empty-state">Carregando…</p>
+        </div>
       </div>
     );
   }
@@ -82,51 +84,53 @@ export default function LeadDetail() {
   ];
 
   return (
-    <div style={{ padding: 24, maxWidth: 700, margin: '0 auto' }}>
-      <nav style={{ marginBottom: 24 }}>
-        <Link to="/leads">← Voltar para lista</Link>
-      </nav>
-      <h1>Lead — {lead.lead_name || lead.lead_phone}</h1>
-      <section style={{ marginBottom: 32 }}>
+    <div>
+      <header className="topbar">
+        <div>
+          <h1 className="page-title">Lead — {lead.lead_name || lead.lead_phone}</h1>
+          <p className="page-subtitle">Visão consolidada de dados e histórico da conversa.</p>
+        </div>
+        <Link to="/leads" className="action-link">
+          Voltar para lista
+        </Link>
+      </header>
+      <section className="panel section-gap">
+        <div className="panel-inner">
         <h2>Dados</h2>
-        <dl style={{ display: 'grid', gridTemplateColumns: '140px 1fr', gap: '8px 16px' }}>
+        <dl className="lead-fields">
           {campos.map(({ label, value }) => (
             <React.Fragment key={label}>
-              <dt style={{ color: '#666' }}>{label}</dt>
-              <dd style={{ margin: 0 }}>{value ?? '—'}</dd>
+              <dt className="muted">{label}</dt>
+              <dd>{value ?? '—'}</dd>
             </React.Fragment>
           ))}
         </dl>
         {lead.qualified_at && (
-          <p style={{ color: '#666', marginTop: 8 }}>
+          <p className="meta">
             Qualificado em {new Date(lead.qualified_at).toLocaleString('pt-BR')}
           </p>
         )}
+        </div>
       </section>
-      <section>
+      <section className="panel">
+        <div className="panel-inner">
         <h2>Timeline</h2>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
+        <ul className="timeline">
           {events.map((e) => (
-            <li
-              key={e.id}
-              style={{
-                borderLeft: '3px solid #ddd',
-                paddingLeft: 12,
-                marginBottom: 12,
-              }}
-            >
+            <li key={e.id} className="timeline-item">
               <strong>{e.event_type}</strong>
               {e.actor_type && ` (${e.actor_type})`}
               {e.actor_phone && ` — ${e.actor_phone}`}
               <br />
-              <small>{new Date(e.created_at).toLocaleString('pt-BR')}</small>
+              <small className="muted">{new Date(e.created_at).toLocaleString('pt-BR')}</small>
               {e.payload && Object.keys(e.payload).length > 0 && (
-                <pre style={{ fontSize: 12, marginTop: 4 }}>{JSON.stringify(e.payload)}</pre>
+                <pre className="code-block">{JSON.stringify(e.payload)}</pre>
               )}
             </li>
           ))}
         </ul>
-        {events.length === 0 && <p>Nenhum evento registrado.</p>}
+        {events.length === 0 && <p className="empty-state">Nenhum evento registrado.</p>}
+        </div>
       </section>
     </div>
   );

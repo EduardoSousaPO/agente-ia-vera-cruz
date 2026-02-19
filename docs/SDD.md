@@ -5,7 +5,7 @@
 
 ## Etapa 0 — Preparação
 Antes de qualquer ação:
-- Leia: `PRD.md`, `SPEC.md`, `SDD.md` e `.cursor/*.mdc`.
+- Leia: `PRD.md`, `SPEC.md`, `SDD.md`, `DESIGN_SYSTEM.md` (quando houver UI) e `.cursor/*.mdc`.
 - Defina: “qual feature estou fazendo agora?”
 
 ## Chat 1 — Pesquisa (explorar)
@@ -35,6 +35,11 @@ Checklist:
 Saída obrigatória:
 - `SPEC.md` atualizado (ou escrito do zero) com a lista final.
 
+Regra adicional para UI/UX:
+- O frontend segue o **design system** em `docs/DESIGN_SYSTEM.md` (tipografia, cores, espaçamento, formas, layout e lógica de apresentação inspirada no Asana).
+- Mudanças de design/layout exigem registrar direção visual na SPEC (tokens, layout, páginas afetadas) e atualizar `DESIGN_SYSTEM.md` quando for decisão canônica.
+- O ciclo só fecha com atualização dos docs canônicos impactados (`PRD.md`, `DECISIONS.md`, `SPRINTS.md`).
+
 ## /clear
 
 ## Chat 3 — Implementação (executar)
@@ -49,3 +54,4 @@ Checklist:
 - Build/lint passam.
 - Fluxos do PRD funcionam.
 - Nenhum arquivo extra criado.
+- Se houver mudança visual, consistência de layout desktop/mobile validada.

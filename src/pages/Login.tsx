@@ -9,6 +9,7 @@ export default function Login() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (!supabase) return;
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) navigate('/leads', { replace: true });
     });
@@ -16,6 +17,7 @@ export default function Login() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    if (!supabase) return;
     setErro('');
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
@@ -30,31 +32,35 @@ export default function Login() {
 
   if (enviado) {
     return (
-      <div style={{ maxWidth: 400, margin: '48px auto', padding: 24, textAlign: 'center' }}>
-        <h1>Verifique seu e-mail</h1>
-        <p>Enviamos um link de acesso para <strong>{email}</strong>. Clique no link para entrar.</p>
+      <div className="auth-wrap">
+        <div className="auth-card auth-card--center">
+          <h1>Verifique seu e-mail</h1>
+          <p>Enviamos um link de acesso para <strong>{email}</strong>. Clique no link para entrar.</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: '48px auto', padding: 24 }}>
-      <h1>Entrar</h1>
-      <p style={{ color: '#666', marginBottom: 24 }}>Magic Link — informe seu e-mail.</p>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="seu@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ width: '100%', padding: 12, marginBottom: 16, boxSizing: 'border-box' }}
-        />
-        {erro && <p style={{ color: 'crimson', marginBottom: 16 }}>{erro}</p>}
-        <button type="submit" style={{ padding: '12px 24px' }}>
-          Enviar link
-        </button>
-      </form>
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <h1>Entrar</h1>
+        <p className="muted">Magic Link — informe seu e-mail.</p>
+        <form onSubmit={handleSubmit}>
+          <input
+            className="input form-field"
+            type="email"
+            placeholder="seu@email.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          {erro && <p className="text-error form-field form-field--error">{erro}</p>}
+          <button className="btn" type="submit">
+            Enviar link
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

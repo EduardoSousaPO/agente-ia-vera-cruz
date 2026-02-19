@@ -77,6 +77,13 @@ A IA valida se o número é de vendedor cadastrado e atualiza o CRM.
 - Detalhe do lead: campos + timeline + notas.
 - Tela Métricas: cards simples e tabela “leads por modelo”.
 
+### 3.6 Direção visual do Mini‑CRM (MVP)
+- Referência de estilo: mistura de padrões do Notion e do Asana (limpo, editorial, com hierarquia forte).
+- Layout base: sidebar fixa + área de conteúdo com cards/painéis.
+- Padrão visual: fundo claro com profundidade sutil, bordas suaves, tipografia legível, foco em escaneabilidade.
+- Responsividade obrigatória: funcionamento completo em desktop e mobile sem quebra de navegação.
+- Consistência: todas as páginas autenticadas devem compartilhar o mesmo sistema de layout/tokens.
+
 ## 4) Fora de escopo (agora)
 - Integração automática com estoque/ERP.
 - Automação avançada de follow‑ups.

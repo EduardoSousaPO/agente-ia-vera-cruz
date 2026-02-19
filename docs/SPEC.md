@@ -74,6 +74,21 @@ Nenhum arquivo fora desta lista pode ser criado ou alterado na implementação.
 
 ---
 
+### 3.5 Refresh visual (Notion + Asana) — Frontend
+
+| Arquivo | Ação | O que fazer |
+|--------|------|-------------|
+| `src/styles.css` | CREATE | Definir design tokens (cores, tipografia, spacing), componentes visuais (panel, table, inputs, metric-card), animações leves e responsividade mobile. |
+| `src/main.tsx` | MODIFY | Importar CSS global do app (`styles.css`). |
+| `src/App.tsx` | MODIFY | Implementar layout compartilhado autenticado (sidebar + content) e manter proteção de rotas. |
+| `src/pages/Login.tsx` | MODIFY | Aplicar layout de autenticação no novo design system. |
+| `src/pages/LeadsList.tsx` | MODIFY | Atualizar estrutura visual (header, toolbar, tabela) com classes do design system. |
+| `src/pages/LeadDetail.tsx` | MODIFY | Atualizar visual de dados e timeline com padrão de painel. |
+| `src/pages/Metricas.tsx` | MODIFY | Atualizar visual de cards e tabela com padrão de painel. |
+| `index.html` | MODIFY | Carregar fonte utilizada no design system. |
+
+---
+
 ## 4) Proibido
 
 - Criar arquivos não listados acima.
