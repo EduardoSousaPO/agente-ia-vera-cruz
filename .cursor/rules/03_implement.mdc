@@ -1,0 +1,8 @@
+---
+name: cmd_03_implement
+description: Implementação (Chat 3).
+---
+
+- Implementar exatamente o SPEC.
+- Não criar arquivos fora da lista.
+- Se erro: corrigir só o erro.

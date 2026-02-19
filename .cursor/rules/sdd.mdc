@@ -1,0 +1,8 @@
+---
+name: skill_sdd
+description: Como executar SDD neste projeto.
+---
+
+- Leia PRD e SPEC antes de codar.
+- Se precisar mudar escopo/arquivos, atualize o SPEC antes.
+- Não invente integrações.

@@ -1,0 +1,19 @@
+---
+description: 
+alwaysApply: true
+---
+
+# commands.mdc — Rotina sugerida
+
+## Chat 1 — Pesquisa
+- Enumerar estrutura do repo.
+- Identificar padrões.
+- Mapear integrações (Supabase, Vercel, SuperAgentes).
+
+## Chat 2 — SPEC
+- Lista fechada de arquivos.
+- CREATE/MODIFY com mudanças exatas.
+
+## Chat 3 — Implementação
+- Implementar na ordem: DB → API → UI.
+- Validar build.

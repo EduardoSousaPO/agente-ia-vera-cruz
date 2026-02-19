@@ -1,0 +1,12 @@
+# skills.mdc — Skills (como você deve trabalhar)
+
+## Skill: MVP de ponta a ponta
+- Priorize o fluxo completo (WhatsApp → qualificação → handoff → comando vendedor → CRM).
+
+## Skill: Simplicidade
+- Poucas dependências.
+- Código explícito e fácil de manter.
+
+## Skill: Confiabilidade
+- Registrar eventos em timeline.
+- Validar vendedor antes de aceitar comando.

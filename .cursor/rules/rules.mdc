@@ -1,0 +1,27 @@
+---
+name: VeraCruz_SDD_Rules
+description: Regras globais para o Cursor não delirar e seguir SDD.
+---
+
+# Regras globais (obrigatórias)
+
+## Fonte da verdade
+- Siga `docs/PRD.md` e `docs/SPEC.md`.
+- Se houver lacuna/contradição, pare e pergunte.
+
+## Escopo e arquivos
+- Não crie arquivos fora da lista do SPEC.
+- Não crie novos documentos fora de `docs/` e fora da lista.
+
+## Stack fixa
+- Vite + React + TypeScript
+- Supabase
+- Vercel (deploy + `/api/*`)
+- SuperAgentes (WhatsApp + IA)
+
+## Segurança
+- Service Role só no backend.
+- Endpoints do CRM (`/api/*`) exigem header `X-CRM-API-KEY` (ver API_CONTRACT.md).
+
+## Linguagem
+- PT-BR, simples, sem jargão.

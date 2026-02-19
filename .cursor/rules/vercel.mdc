@@ -1,0 +1,7 @@
+---
+name: skill_vercel
+description: Padrões Vercel Functions.
+---
+
+- Funções em `/api/*` (TypeScript).
+- Sempre validar token e retornar JSON.

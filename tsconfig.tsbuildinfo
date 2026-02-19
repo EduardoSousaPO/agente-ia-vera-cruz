@@ -1,0 +1,1 @@
+{"root":["./src/app.tsx","./src/main.tsx","./src/lib/supabase.ts","./src/pages/leaddetail.tsx","./src/pages/leadslist.tsx","./src/pages/login.tsx","./src/pages/metricas.tsx"],"version":"5.6.3"}

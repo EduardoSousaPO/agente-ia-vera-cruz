@@ -1,0 +1,8 @@
+---
+name: skill_supabase
+description: Padrões Supabase (schema, RLS, seeds).
+---
+
+- Telefone sempre E.164.
+- RLS: leitura autenticado; escrita via backend (Service Role).
+- Seeds no migration.

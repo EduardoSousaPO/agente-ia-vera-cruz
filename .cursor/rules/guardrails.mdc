@@ -1,0 +1,21 @@
+# guardrails.mdc — Guardrails do projeto (obrigatório)
+
+## Regra máxima
+NÃO crie arquivos fora da lista do SPEC.md.
+- Se faltar algo: pare e peça autorização para incluir no SPEC.
+
+## Linguagem
+- Tudo em português (UI, textos, comentários).
+
+## Escopo
+- Só MVP do PRD.
+- Nada de features novas.
+
+## Segurança
+- Service role do Supabase só no backend.
+- Nunca expor `CRM_API_KEY` no frontend.
+- Nunca comitar `.env` real.
+
+## SuperAgentes
+- Não inventar endpoints/propriedades que não existam.
+- Se existir dúvida sobre capacidade, registrar no DECISIONS.md e propor alternativa simples.

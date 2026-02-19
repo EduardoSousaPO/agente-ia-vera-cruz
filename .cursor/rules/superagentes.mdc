@@ -1,0 +1,12 @@
+---
+name: skill_superagentes
+description: Integração SuperAgentes (estágios, variáveis, HTTP tool, WhatsApp).
+---
+
+Alinhado à documentação oficial (docs.superagentes.ai):
+- **Ferramenta HTTP**: Base URL `https://<APP_VERCEL>/api`; header `X-CRM-API-KEY`; endpoints em API_CONTRACT.md (leads_upsert, leads_qualify, leads_handoff, vendors_command, contacts_role).
+- **WhatsApp**: canal via **Evolution QR** (Integração > Adicionar Conta > Evolution QR).
+- **Conhecimento**: Ferramenta Conhecimento com datastore “Vera Cruz — Effa (catálogo + FAQ)”.
+- **Variáveis**: usar para dados do lead (nome, cidade, modelo, prazo, pagamento, etc.); descrições claras para o agente.
+- **Estágios**: opcional para fluxo qualificação → handoff → pós-handoff; configurar na aba do agente.
+- Não inventar endpoints ou propriedades; em dúvida, registrar em DECISIONS.md.

@@ -1,0 +1,8 @@
+---
+name: cmd_00_bootstrap
+description: Bootstrap do repo sem sair do SPEC.
+---
+
+1) Criar Vite + React + TS no root.
+2) Criar somente os arquivos do SPEC (compiláveis).
+3) Sem implementar lógica completa ainda.

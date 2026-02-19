@@ -1,0 +1,7 @@
+---
+name: cmd_02_spec
+description: Refinar SPEC (Chat 2).
+---
+
+- Deixar SPEC executável, sem vaguidão, arquivo por arquivo.
+- Sem implementação.

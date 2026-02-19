@@ -1,0 +1,4 @@
+# subagents.mdc
+
+Este projeto não cria subagentes em código.
+Qualquer “subagente” é configuração dentro do SuperAgentes.

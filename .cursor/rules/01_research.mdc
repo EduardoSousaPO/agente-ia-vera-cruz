@@ -1,0 +1,8 @@
+---
+name: cmd_01_research
+description: Pesquisa (Chat 1).
+---
+
+- Ler PRD e SPEC.
+- Conferir documentação do SuperAgentes já cadastrada no Cursor.
+- Listar dúvidas objetivas antes de implementar.
