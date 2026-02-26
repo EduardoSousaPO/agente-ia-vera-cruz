@@ -2,6 +2,15 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireCrmApiKey } from './_lib/auth.js';
 import { supabase } from './_lib/db.js';
 
+async function triggerSync(): Promise<void> {
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}` 
+    : 'https://agente-ia-vera-cruz.vercel.app';
+  const syncToken = process.env.SYNC_TOKEN || '';
+  
+  await fetch(`${baseUrl}/api/sync_conversations?token=${syncToken}`, { method: 'GET' });
+}
+
 function shortId(uuid: string): string {
   return uuid.replace(/-/g, '').slice(0, 6).toUpperCase();
 }
@@ -110,6 +119,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         payload: {},
       });
     }
+
+    triggerSync().catch(err => console.error('Sync trigger error:', err));
 
     return res.status(200).json({ lead_id: lead.id, lead_stage });
   } catch (err) {
