@@ -59,14 +59,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(400).json({ error: 'lead_phone é obrigatório' });
     }
 
-    const { data: lead, error: leadError } = await supabase
+    const selectFields = 'id, lead_name, lead_phone, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_email, lead_cpf, lead_birth_date, lead_down_payment';
+    
+    let { data: lead } = await supabase
       .from('leads')
-      .select('id, lead_name, lead_phone, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_email, lead_cpf, lead_birth_date, lead_down_payment')
+      .select(selectFields)
       .eq('lead_phone', lead_phone)
-      .single();
+      .maybeSingle();
 
-    if (leadError || !lead) {
-      return res.status(404).json({ error: 'Lead não encontrado' });
+    if (!lead) {
+      const { data: newLead, error: insertError } = await supabase
+        .from('leads')
+        .insert({
+          lead_phone,
+          lead_name: body.lead_name ?? null,
+          lead_city: body.lead_city ?? null,
+          lead_model_interest: body.lead_model_interest ?? null,
+          lead_payment_method: body.lead_payment_method ?? null,
+          lead_email: body.lead_email ?? null,
+          lead_cpf: body.lead_cpf ?? null,
+          lead_birth_date: body.lead_birth_date ?? null,
+          lead_down_payment: body.lead_down_payment ?? null,
+          lead_stage: 'new',
+        })
+        .select(selectFields)
+        .single();
+
+      if (insertError || !newLead) {
+        console.error('leads_handoff insert error:', insertError);
+        return res.status(500).json({ error: 'Erro ao criar lead' });
+      }
+
+      await supabase.from('leads').update({ handoff_short_id: shortId(newLead.id) }).eq('id', newLead.id);
+      lead = newLead;
     }
 
     const { data: sellerId, error: rpcError } = await supabase.rpc('assign_seller_round_robin');
