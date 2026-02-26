@@ -4,9 +4,9 @@ import { supabase } from './_lib/db.js';
 interface SuperAgentesConversation {
   id: string;
   channel: string;
-  channelExternalId: string;
-  contactInfo?: {
-    phoneNumber?: string;
+  channelExternalId?: string;
+  contact?: {
+    phone?: string;
     name?: string;
     email?: string;
   };
@@ -71,15 +71,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         continue;
       }
 
-      const phone = conv.contactInfo?.phoneNumber || conv.channelExternalId;
+      const phone = conv.contact?.phone || conv.channelExternalId;
       if (!phone) {
+        console.log(`[sync] Conversa sem telefone: id=${conv.id}`);
         skipped++;
         continue;
       }
 
       const last8 = getLast8Digits(phone);
-      const name = conv.contactInfo?.name || null;
-      const email = conv.contactInfo?.email || null;
+      const name = conv.contact?.name || null;
+      const email = conv.contact?.email || null;
 
       console.log(`[sync] Processando conversa: phone=${phone}, last8=${last8}, name=${name}`);
 
