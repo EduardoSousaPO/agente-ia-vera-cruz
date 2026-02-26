@@ -477,6 +477,66 @@ a {
   }
 }
 
+/* —— Chat History (histórico de conversa) —— */
+.chat-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-height: 500px;
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.chat-message {
+  display: flex;
+  max-width: 85%;
+}
+
+.chat-message--human {
+  align-self: flex-start;
+}
+
+.chat-message--agent {
+  align-self: flex-end;
+}
+
+.chat-bubble {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  position: relative;
+}
+
+.chat-message--human .chat-bubble {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.chat-message--agent .chat-bubble {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.chat-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.chat-time {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.chat-message--agent .chat-time {
+  text-align: right;
+}
+
 /* —— Responsivo —— */
 @media (max-width: 900px) {
   .app-shell {
@@ -501,5 +561,9 @@ a {
 
   .lead-fields {
     grid-template-columns: 1fr;
+  }
+  
+  .chat-message {
+    max-width: 95%;
   }
 }

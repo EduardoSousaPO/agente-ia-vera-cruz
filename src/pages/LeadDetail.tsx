@@ -37,11 +37,20 @@ type Event = {
   created_at: string;
 };
 
+type Message = {
+  id: string;
+  text: string;
+  from: 'agent' | 'human';
+  timestamp: string;
+};
+
 export default function LeadDetail() {
   const { id } = useParams<{ id: string }>();
   const { user, isGestor, isVendedor } = useAuth();
   const [lead, setLead] = useState<Lead | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(true);
   const [loading, setLoading] = useState(true);
   const [accessDenied, setAccessDenied] = useState(false);
 
@@ -77,6 +86,14 @@ export default function LeadDetail() {
       .eq('lead_id', id)
       .order('created_at', { ascending: true })
       .then(({ data }) => setEvents((data as Event[]) ?? []));
+
+    fetch(`/api/conversation_history?lead_id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        setMessages(data.messages || []);
+        setLoadingMessages(false);
+      })
+      .catch(() => setLoadingMessages(false));
   }, [id, user, isVendedor]);
 
   if (accessDenied) {
@@ -145,9 +162,38 @@ export default function LeadDetail() {
         )}
         </div>
       </section>
+      <section className="panel section-gap">
+        <div className="panel-inner">
+        <h2>Histórico da Conversa</h2>
+        {loadingMessages ? (
+          <p className="empty-state">Carregando mensagens…</p>
+        ) : messages.length === 0 ? (
+          <p className="empty-state">Nenhuma mensagem encontrada.</p>
+        ) : (
+          <div className="chat-history">
+            {messages.map((m) => (
+              <div key={m.id} className={`chat-message ${m.from === 'agent' ? 'chat-message--agent' : 'chat-message--human'}`}>
+                <div className="chat-bubble">
+                  <p className="chat-text">{m.text}</p>
+                  <small className="chat-time">
+                    {new Date(m.timestamp).toLocaleString('pt-BR', { 
+                      day: '2-digit', 
+                      month: '2-digit', 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </small>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        </div>
+      </section>
+
       <section className="panel">
         <div className="panel-inner">
-        <h2>Timeline</h2>
+        <h2>Timeline de Eventos</h2>
         <ul className="timeline">
           {events.map((e) => (
             <li key={e.id} className="timeline-item">

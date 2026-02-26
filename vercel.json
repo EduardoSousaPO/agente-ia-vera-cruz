@@ -7,7 +7,7 @@
   "crons": [
     {
       "path": "/api/sync_conversations",
-      "schedule": "*/10 * * * *"
+      "schedule": "* * * * *"
     }
   ],
   "rewrites": [
