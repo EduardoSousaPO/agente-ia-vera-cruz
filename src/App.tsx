@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import supabase, { isSupabaseConfigured } from './lib/supabase';
+import { isSupabaseConfigured } from './lib/supabase';
 import { AuthProvider, useAuth } from './lib/AuthContext';
 import Login from './pages/Login';
 import LeadsList from './pages/LeadsList';
@@ -26,33 +26,8 @@ VITE_SUPABASE_ANON_KEY=sua-anon-key`}
   );
 }
 
-function AcessoNegado() {
-  const navigate = useNavigate();
-  
-  async function handleLogout() {
-    if (supabase) {
-      await supabase.auth.signOut();
-      navigate('/login');
-    }
-  }
-
-  return (
-    <div className="auth-wrap">
-      <div className="auth-card auth-card--center">
-        <h1>Acesso Negado</h1>
-        <p className="muted">
-          Seu email não está cadastrado no sistema. Entre em contato com o administrador para solicitar acesso.
-        </p>
-        <button className="btn" onClick={handleLogout}>
-          Voltar ao login
-        </button>
-      </div>
-    </div>
-  );
-}
-
 function Protegida({ children }: { children: React.ReactNode }) {
-  const { user, loading, isAuthenticated } = useAuth();
+  const { loading, isAuthenticated } = useAuth();
 
   if (loading) {
     return <div className="loading-wrap">Carregando…</div>;
@@ -60,10 +35,6 @@ function Protegida({ children }: { children: React.ReactNode }) {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
-  }
-
-  if (isAuthenticated && !user) {
-    return <AcessoNegado />;
   }
 
   return <>{children}</>;
