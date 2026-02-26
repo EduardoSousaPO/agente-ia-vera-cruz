@@ -28,50 +28,68 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    async function loadUser() {
-      const { data: { session } } = await supabase!.auth.getSession();
-      
-      if (session?.user?.email) {
-        const { data: profile } = await supabase!
+    let isMounted = true;
+
+    async function loadUserProfile(email: string | undefined) {
+      if (!email) {
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+        }
+        return;
+      }
+
+      try {
+        const { data: profile, error } = await supabase!
           .from('app_users')
           .select('email, role, name, seller_id')
-          .eq('email', session.user.email)
+          .eq('email', email)
           .eq('is_active', true)
-          .single();
+          .maybeSingle();
 
-        if (profile) {
-          setUser(profile as UserProfile);
-        } else {
-          setUser(null);
+        if (isMounted) {
+          if (profile && !error) {
+            setUser(profile as UserProfile);
+          } else {
+            setUser(null);
+          }
+          setLoading(false);
         }
-      } else {
-        setUser(null);
+      } catch (err) {
+        console.error('Erro ao carregar perfil:', err);
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+        }
       }
-      setLoading(false);
     }
 
-    loadUser();
+    async function initAuth() {
+      try {
+        const { data: { session } } = await supabase!.auth.getSession();
+        await loadUserProfile(session?.user?.email);
+      } catch (err) {
+        console.error('Erro ao inicializar auth:', err);
+        if (isMounted) {
+          setUser(null);
+          setLoading(false);
+        }
+      }
+    }
+
+    initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (session?.user?.email) {
-        const { data: profile } = await supabase!
-          .from('app_users')
-          .select('email, role, name, seller_id')
-          .eq('email', session.user.email)
-          .eq('is_active', true)
-          .single();
-
-        if (profile) {
-          setUser(profile as UserProfile);
-        } else {
-          setUser(null);
-        }
-      } else {
-        setUser(null);
+      if (isMounted) {
+        setLoading(true);
+        await loadUserProfile(session?.user?.email);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function signOut() {
