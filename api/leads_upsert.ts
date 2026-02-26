@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireCrmApiKey } from './_lib/auth';
-import { supabase } from './_lib/db';
+import { requireCrmApiKey } from './_lib/auth.js';
+import { supabase } from './_lib/db.js';
 
 function shortId(uuid: string): string {
   return uuid.replace(/-/g, '').slice(0, 6).toUpperCase();

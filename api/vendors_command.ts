@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireCrmApiKey } from './_lib/auth';
-import { supabase } from './_lib/db';
+import { requireCrmApiKey } from './_lib/auth.js';
+import { supabase } from './_lib/db.js';
 
 const CMD_STAGE: Record<string, string> = {
   '1': 'in_contact',

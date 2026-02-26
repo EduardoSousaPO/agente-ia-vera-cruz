@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { requireCrmApiKey } from './_lib/auth';
-import { supabase } from './_lib/db';
+import { requireCrmApiKey } from './_lib/auth.js';
+import { supabase } from './_lib/db.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
