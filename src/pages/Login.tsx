@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 
@@ -8,15 +8,26 @@ export default function Login() {
   const [erro, setErro] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const hasRedirected = useRef(false);
 
   useEffect(() => {
     if (!supabase) return;
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        console.log('[Login] Sessão existente encontrada, redirecionando...');
+    
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session && !hasRedirected.current) {
+        hasRedirected.current = true;
         navigate('/leads', { replace: true });
       }
     });
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session && !hasRedirected.current) {
+        hasRedirected.current = true;
+        navigate('/leads', { replace: true });
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -24,39 +35,19 @@ export default function Login() {
     if (!supabase) return;
     setErro('');
     setLoading(true);
-    console.log('[Login] Tentando login...');
 
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: senha,
-      });
+    const { error } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: senha,
+    });
 
-      console.log('[Login] Resposta do Supabase:', { data: !!data, error: !!error, hasSession: !!data?.session });
-
-      if (error) {
-        console.error('[Login] Erro:', error.message);
-        setLoading(false);
-        if (error.message === 'Invalid login credentials') {
-          setErro('Email ou senha incorretos');
-        } else {
-          setErro(error.message);
-        }
-        return;
-      }
-
-      if (data?.session) {
-        console.log('[Login] Login OK, navegando para /leads');
-        navigate('/leads', { replace: true });
-      } else {
-        console.log('[Login] Login sem sessão');
-        setLoading(false);
-        setErro('Erro ao fazer login. Tente novamente.');
-      }
-    } catch (err) {
-      console.error('[Login] Erro inesperado:', err);
+    if (error) {
       setLoading(false);
-      setErro('Erro inesperado. Tente novamente.');
+      if (error.message === 'Invalid login credentials') {
+        setErro('Email ou senha incorretos');
+      } else {
+        setErro(error.message);
+      }
     }
   }
 
