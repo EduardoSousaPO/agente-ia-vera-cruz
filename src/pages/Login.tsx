@@ -4,8 +4,9 @@ import supabase from '../lib/supabase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
-  const [enviado, setEnviado] = useState(false);
+  const [senha, setSenha] = useState('');
   const [erro, setErro] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,45 +20,52 @@ export default function Login() {
     e.preventDefault();
     if (!supabase) return;
     setErro('');
-    const { error } = await supabase.auth.signInWithOtp({
+    setLoading(true);
+
+    const { error } = await supabase.auth.signInWithPassword({
       email: email.trim(),
-      options: { emailRedirectTo: window.location.origin + '/leads' },
+      password: senha,
     });
+
+    setLoading(false);
+
     if (error) {
-      setErro(error.message);
+      if (error.message === 'Invalid login credentials') {
+        setErro('Email ou senha incorretos');
+      } else {
+        setErro(error.message);
+      }
       return;
     }
-    setEnviado(true);
-  }
 
-  if (enviado) {
-    return (
-      <div className="auth-wrap">
-        <div className="auth-card auth-card--center">
-          <h1>Verifique seu e-mail</h1>
-          <p>Enviamos um link de acesso para <strong>{email}</strong>. Clique no link para entrar.</p>
-        </div>
-      </div>
-    );
+    navigate('/leads', { replace: true });
   }
 
   return (
     <div className="auth-wrap">
       <div className="auth-card">
-        <h1>Entrar</h1>
-        <p className="muted">Magic Link — informe seu e-mail.</p>
+        <h1>Vera Cruz CRM</h1>
+        <p className="muted">Acesse com seu email e senha.</p>
         <form onSubmit={handleSubmit}>
           <input
             className="input form-field"
             type="email"
-            placeholder="seu@email.com"
+            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
+          <input
+            className="input form-field"
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
           {erro && <p className="text-error form-field form-field--error">{erro}</p>}
-          <button className="btn" type="submit">
-            Enviar link
+          <button className="btn" type="submit" disabled={loading}>
+            {loading ? 'Entrando...' : 'Entrar'}
           </button>
         </form>
       </div>
