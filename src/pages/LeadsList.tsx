@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import { useAuth } from '../lib/AuthContext';
 
 type Lead = {
   id: string;
@@ -11,24 +12,30 @@ type Lead = {
   lead_model_interest: string | null;
   lead_payment_method: string | null;
   created_at: string;
+  sellers?: { name: string } | null;
 };
 
 export default function LeadsList() {
+  const { user, isGestor, isVendedor } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [filtroStage, setFiltroStage] = useState<string>('');
   const [busca, setBusca] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase) {
+    if (!supabase || !user) {
       setLoading(false);
       return;
     }
 
     let q = supabase
       .from('leads')
-      .select('id, lead_phone, lead_name, lead_city, lead_stage, lead_model_interest, lead_payment_method, created_at')
+      .select('id, lead_phone, lead_name, lead_city, lead_stage, lead_model_interest, lead_payment_method, created_at, assigned_seller_id, sellers(name)')
       .order('created_at', { ascending: false });
+
+    if (isVendedor && user.seller_id) {
+      q = q.eq('assigned_seller_id', user.seller_id);
+    }
 
     if (filtroStage) q = q.eq('lead_stage', filtroStage);
     if (busca.trim()) {
@@ -40,7 +47,7 @@ export default function LeadsList() {
       if (error) return;
       setLeads((data as Lead[]) ?? []);
     });
-  }, [filtroStage, busca]);
+  }, [filtroStage, busca, user, isVendedor]);
 
   const stages = ['new', 'qualified', 'handoff_sent', 'in_contact', 'follow_up', 'lost', 'won'];
 
@@ -48,12 +55,21 @@ export default function LeadsList() {
     <div>
       <header className="topbar">
         <div>
-          <h1 className="page-title">Leads</h1>
-          <p className="page-subtitle">Lista viva do funil comercial com busca e filtros rápidos.</p>
+          <h1 className="page-title">
+            {isVendedor ? 'Meus Leads' : 'Todos os Leads'}
+          </h1>
+          <p className="page-subtitle">
+            {isVendedor 
+              ? 'Leads atribuídos a você para atendimento.'
+              : 'Lista viva do funil comercial com busca e filtros rápidos.'
+            }
+          </p>
         </div>
-        <Link to="/metricas" className="action-link">
-          Ver métricas
-        </Link>
+        {isGestor && (
+          <Link to="/metricas" className="action-link">
+            Ver métricas
+          </Link>
+        )}
       </header>
       <section className="panel">
         <div className="panel-inner">
@@ -90,6 +106,7 @@ export default function LeadsList() {
               <th>Estágio</th>
               <th>Modelo</th>
               <th>Pagamento</th>
+              {isGestor && <th>Vendedor</th>}
               <th>Data</th>
             </tr>
           </thead>
@@ -104,6 +121,7 @@ export default function LeadsList() {
                 <td>{l.lead_stage || '—'}</td>
                 <td>{l.lead_model_interest || '—'}</td>
                 <td>{l.lead_payment_method || '—'}</td>
+                {isGestor && <td>{l.sellers?.name || '—'}</td>}
                 <td>
                   {l.created_at ? new Date(l.created_at).toLocaleDateString('pt-BR') : '—'}
                 </td>
@@ -112,7 +130,14 @@ export default function LeadsList() {
           </tbody>
         </table>
       )}
-      {!loading && leads.length === 0 && <p className="empty-state">Nenhum lead encontrado.</p>}
+      {!loading && leads.length === 0 && (
+        <p className="empty-state">
+          {isVendedor 
+            ? 'Nenhum lead atribuído a você ainda.'
+            : 'Nenhum lead encontrado.'
+          }
+        </p>
+      )}
         </div>
       </section>
     </div>

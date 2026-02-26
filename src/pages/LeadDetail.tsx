@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
+import { useAuth } from '../lib/AuthContext';
 
 type Lead = {
   id: string;
@@ -21,8 +22,10 @@ type Lead = {
   handoff_short_id: string | null;
   qualified_at: string | null;
   handoff_at: string | null;
+  assigned_seller_id: string | null;
   created_at: string;
   updated_at: string;
+  sellers?: { name: string } | null;
 };
 
 type Event = {
@@ -36,20 +39,36 @@ type Event = {
 
 export default function LeadDetail() {
   const { id } = useParams<{ id: string }>();
+  const { user, isGestor, isVendedor } = useAuth();
   const [lead, setLead] = useState<Lead | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
+  const [accessDenied, setAccessDenied] = useState(false);
 
   useEffect(() => {
-    if (!id || !supabase) return;
+    if (!id || !supabase || !user) return;
+
     supabase
       .from('leads')
-      .select('*')
+      .select('*, sellers(name)')
       .eq('id', id)
       .single()
       .then(({ data, error }) => {
-        if (error) return;
-        setLead(data as Lead);
+        if (error) {
+          setLoading(false);
+          return;
+        }
+        
+        const leadData = data as Lead;
+        
+        if (isVendedor && user.seller_id && leadData.assigned_seller_id !== user.seller_id) {
+          setAccessDenied(true);
+          setLoading(false);
+          return;
+        }
+        
+        setLead(leadData);
+        setLoading(false);
       });
 
     supabase
@@ -58,9 +77,11 @@ export default function LeadDetail() {
       .eq('lead_id', id)
       .order('created_at', { ascending: true })
       .then(({ data }) => setEvents((data as Event[]) ?? []));
+  }, [id, user, isVendedor]);
 
-    setLoading(false);
-  }, [id]);
+  if (accessDenied) {
+    return <Navigate to="/leads" replace />;
+  }
 
   if (loading || !lead) {
     return (
@@ -90,6 +111,10 @@ export default function LeadDetail() {
     { label: 'Estágio', value: lead.lead_stage },
     { label: 'ID curto (comandos)', value: lead.handoff_short_id },
   ];
+
+  if (isGestor) {
+    campos.push({ label: 'Vendedor atribuído', value: lead.sellers?.name || null });
+  }
 
   return (
     <div>

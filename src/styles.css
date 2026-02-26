@@ -119,6 +119,51 @@ a {
   color: var(--accent);
 }
 
+/* —— Sidebar footer (user info + logout) —— */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--border);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.user-name {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text);
+}
+
+.user-role {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+
+.btn--logout {
+  width: 100%;
+  background: transparent;
+  color: var(--text-muted);
+  border-color: var(--border);
+  font-size: 14px;
+}
+
+.btn--logout:hover {
+  background: var(--surface-soft);
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+
 /* —— Área de conteúdo —— */
 .content {
   padding: var(--space-5);

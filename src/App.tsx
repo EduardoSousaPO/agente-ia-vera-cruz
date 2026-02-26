@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Routes, Route, Navigate, NavLink, Outlet } from 'react-router-dom';
+import { Routes, Route, Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import supabase, { isSupabaseConfigured } from './lib/supabase';
+import { AuthProvider, useAuth } from './lib/AuthContext';
 import Login from './pages/Login';
 import LeadsList from './pages/LeadsList';
 import LeadDetail from './pages/LeadDetail';
@@ -26,28 +27,86 @@ VITE_SUPABASE_ANON_KEY=sua-anon-key`}
   );
 }
 
+function AcessoNegado() {
+  const navigate = useNavigate();
+  
+  async function handleLogout() {
+    if (supabase) {
+      await supabase.auth.signOut();
+      navigate('/login');
+    }
+  }
+
+  return (
+    <div className="auth-wrap">
+      <div className="auth-card auth-card--center">
+        <h1>Acesso Negado</h1>
+        <p className="muted">
+          Seu email não está cadastrado no sistema. Entre em contato com o administrador para solicitar acesso.
+        </p>
+        <button className="btn" onClick={handleLogout}>
+          Voltar ao login
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function Protegida({ children }: { children: React.ReactNode }) {
-  const [loading, setLoading] = useState(true);
-  const [session, setSession] = useState<boolean | null>(null);
+  const [sessionLoading, setSessionLoading] = useState(true);
+  const [hasSession, setHasSession] = useState(false);
+  const { user, loading: profileLoading } = useAuth();
 
   useEffect(() => {
     if (!supabase) return;
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
-      setSession(!!s);
-      setLoading(false);
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setHasSession(!!session);
+      setSessionLoading(false);
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
-      setSession(!!s);
+      setHasSession(!!s);
     });
     return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) return <div className="loading-wrap">Carregando…</div>;
-  if (!session) return <Navigate to="/login" replace />;
+  if (sessionLoading || profileLoading) {
+    return <div className="loading-wrap">Carregando…</div>;
+  }
+
+  if (!hasSession) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (!user) {
+    return <AcessoNegado />;
+  }
+
+  return <>{children}</>;
+}
+
+function ProtegidaGestor({ children }: { children: React.ReactNode }) {
+  const { isGestor, loading } = useAuth();
+
+  if (loading) {
+    return <div className="loading-wrap">Carregando…</div>;
+  }
+
+  if (!isGestor) {
+    return <Navigate to="/leads" replace />;
+  }
+
   return <>{children}</>;
 }
 
 function LayoutPrivado() {
+  const { user, isGestor, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  async function handleLogout() {
+    await signOut();
+    navigate('/login');
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar">
@@ -62,13 +121,24 @@ function LayoutPrivado() {
           >
             Leads
           </NavLink>
-          <NavLink
-            to="/metricas"
-            className={({ isActive }) => `nav-link${isActive ? ' nav-link-active' : ''}`}
-          >
-            Métricas
-          </NavLink>
+          {isGestor && (
+            <NavLink
+              to="/metricas"
+              className={({ isActive }) => `nav-link${isActive ? ' nav-link-active' : ''}`}
+            >
+              Métricas
+            </NavLink>
+          )}
         </nav>
+        <div className="sidebar-footer">
+          <div className="user-info">
+            <span className="user-name">{user?.name}</span>
+            <span className="user-role">{user?.role === 'gestor' ? 'Gestor' : 'Vendedor'}</span>
+          </div>
+          <button className="btn btn--logout" onClick={handleLogout}>
+            Sair
+          </button>
+        </div>
       </aside>
       <main className="content">
         <Outlet />
@@ -77,11 +147,7 @@ function LayoutPrivado() {
   );
 }
 
-export default function App() {
-  if (!isSupabaseConfigured()) {
-    return <TelaConfigNecessaria />;
-  }
-
+function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -94,9 +160,28 @@ export default function App() {
       >
         <Route path="/leads" element={<LeadsList />} />
         <Route path="/leads/:id" element={<LeadDetail />} />
-        <Route path="/metricas" element={<Metricas />} />
+        <Route
+          path="/metricas"
+          element={
+            <ProtegidaGestor>
+              <Metricas />
+            </ProtegidaGestor>
+          }
+        />
       </Route>
       <Route path="/" element={<Navigate to="/leads" replace />} />
     </Routes>
+  );
+}
+
+export default function App() {
+  if (!isSupabaseConfigured()) {
+    return <TelaConfigNecessaria />;
+  }
+
+  return (
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
