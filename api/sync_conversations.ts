@@ -84,16 +84,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const normalizedPhone = normalizePhone(phone);
+      const phoneWithPlus = '+' + normalizedPhone;
       const name = conv.contactInfo?.name || null;
       const email = conv.contactInfo?.email || null;
+
+      console.log(`[sync] Processando conversa: phone=${phone}, normalized=${normalizedPhone}, name=${name}`);
 
       const { data: existing } = await supabase
         .from('leads')
         .select('id, lead_name, lead_email')
-        .eq('lead_phone', normalizedPhone)
+        .or(`lead_phone.eq.${normalizedPhone},lead_phone.eq.${phoneWithPlus}`)
         .maybeSingle();
 
       if (existing) {
+        console.log(`[sync] Lead já existe: id=${existing.id}`);
         const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
         
         if (name && !existing.lead_name) {
@@ -110,6 +114,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           skipped++;
         }
       } else {
+        console.log(`[sync] Lead não encontrado, criando novo...`);
         const { data: newLead, error: insertError } = await supabase
           .from('leads')
           .insert({
