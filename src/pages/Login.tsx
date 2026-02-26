@@ -22,23 +22,33 @@ export default function Login() {
     setErro('');
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password: senha,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password: senha,
+      });
 
-    setLoading(false);
-
-    if (error) {
-      if (error.message === 'Invalid login credentials') {
-        setErro('Email ou senha incorretos');
-      } else {
-        setErro(error.message);
+      if (error) {
+        setLoading(false);
+        if (error.message === 'Invalid login credentials') {
+          setErro('Email ou senha incorretos');
+        } else {
+          setErro(error.message);
+        }
+        return;
       }
-      return;
-    }
 
-    navigate('/leads', { replace: true });
+      if (data.session) {
+        window.location.href = '/leads';
+      } else {
+        setLoading(false);
+        setErro('Erro ao fazer login. Tente novamente.');
+      }
+    } catch (err) {
+      setLoading(false);
+      setErro('Erro inesperado. Tente novamente.');
+      console.error('Login error:', err);
+    }
   }
 
   return (
