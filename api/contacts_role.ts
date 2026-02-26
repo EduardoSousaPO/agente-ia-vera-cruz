@@ -4,14 +4,20 @@ import { supabase } from './_lib/db';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
-    if (req.method !== 'GET') {
+    if (req.method !== 'GET' && req.method !== 'POST') {
       return res.status(405).json({ error: 'Method not allowed' });
     }
     if (!requireCrmApiKey(req, res)) return;
 
-    const phone = typeof req.query.phone === 'string' ? req.query.phone.trim() : null;
+    let phone: string | null = null;
+    if (req.method === 'GET') {
+      phone = typeof req.query.phone === 'string' ? req.query.phone.trim() : null;
+    } else {
+      const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
+      phone = typeof body.phone === 'string' ? body.phone.trim() : null;
+    }
     if (!phone) {
-      return res.status(400).json({ error: 'Query phone (E.164) é obrigatório' });
+      return res.status(400).json({ error: 'phone (E.164) é obrigatório' });
     }
 
     const { data: seller, error } = await supabase
