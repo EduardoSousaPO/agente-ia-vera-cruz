@@ -9,6 +9,7 @@ type Lead = {
   lead_city: string | null;
   lead_stage: string | null;
   lead_model_interest: string | null;
+  lead_payment_method: string | null;
   created_at: string;
 };
 
@@ -26,7 +27,7 @@ export default function LeadsList() {
 
     let q = supabase
       .from('leads')
-      .select('id, lead_phone, lead_name, lead_city, lead_stage, lead_model_interest, created_at')
+      .select('id, lead_phone, lead_name, lead_city, lead_stage, lead_model_interest, lead_payment_method, created_at')
       .order('created_at', { ascending: false });
 
     if (filtroStage) q = q.eq('lead_stage', filtroStage);
@@ -88,6 +89,7 @@ export default function LeadsList() {
               <th>Cidade</th>
               <th>Estágio</th>
               <th>Modelo</th>
+              <th>Pagamento</th>
               <th>Data</th>
             </tr>
           </thead>
@@ -101,6 +103,7 @@ export default function LeadsList() {
                 <td>{l.lead_city || '—'}</td>
                 <td>{l.lead_stage || '—'}</td>
                 <td>{l.lead_model_interest || '—'}</td>
+                <td>{l.lead_payment_method || '—'}</td>
                 <td>
                   {l.created_at ? new Date(l.created_at).toLocaleDateString('pt-BR') : '—'}
                 </td>

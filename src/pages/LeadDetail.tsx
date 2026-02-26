@@ -6,10 +6,14 @@ type Lead = {
   id: string;
   lead_phone: string;
   lead_name: string | null;
+  lead_email: string | null;
+  lead_cpf: string | null;
+  lead_birth_date: string | null;
   lead_city: string | null;
   lead_model_interest: string | null;
   lead_timeframe: string | null;
   lead_payment_method: string | null;
+  lead_down_payment: string | null;
   lead_has_cnpj: string | null;
   lead_best_contact_time: string | null;
   lead_notes: string | null;
@@ -72,10 +76,14 @@ export default function LeadDetail() {
   const campos = [
     { label: 'Nome', value: lead.lead_name },
     { label: 'Telefone', value: lead.lead_phone },
+    { label: 'Email', value: lead.lead_email },
+    { label: 'CPF', value: lead.lead_cpf },
+    { label: 'Data de Nascimento', value: lead.lead_birth_date },
     { label: 'Cidade', value: lead.lead_city },
     { label: 'Modelo de interesse', value: lead.lead_model_interest },
+    { label: 'Forma de Pagamento', value: lead.lead_payment_method },
+    { label: 'Valor de Entrada', value: lead.lead_down_payment ? `R$ ${lead.lead_down_payment}` : null },
     { label: 'Prazo', value: lead.lead_timeframe },
-    { label: 'Pagamento', value: lead.lead_payment_method },
     { label: 'CNPJ/MEI', value: lead.lead_has_cnpj },
     { label: 'Melhor horário', value: lead.lead_best_contact_time },
     { label: 'Observações', value: lead.lead_notes },

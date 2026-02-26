@@ -21,7 +21,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const { data: lead, error: leadError } = await supabase
       .from('leads')
-      .select('id, lead_name, lead_phone, lead_city, lead_model_interest, lead_timeframe, lead_payment_method')
+      .select('id, lead_name, lead_phone, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_email, lead_cpf, lead_birth_date, lead_down_payment')
       .eq('lead_phone', lead_phone)
       .single();
 
@@ -76,9 +76,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     });
 
     const link = `https://wa.me/${lead.lead_phone?.replace(/^\+/, '')}`;
-    const seller_message_text =
-      `Novo lead qualificado: ${lead.lead_name ?? 'N/A'} | ${lead.lead_city ?? 'N/A'} | ${lead.lead_model_interest ?? 'N/A'} | ${lead.lead_timeframe ?? 'N/A'} | ${lead.lead_payment_method ?? 'N/A'}\n` +
-      `ID: ${handoff_short_id}\nContato: ${link}`;
+    
+    let seller_message_text = `🚗 *NOVO LEAD QUALIFICADO*\n\n`;
+    seller_message_text += `*Nome:* ${lead.lead_name ?? 'N/A'}\n`;
+    seller_message_text += `*Telefone:* ${lead.lead_phone}\n`;
+    seller_message_text += `*Email:* ${lead.lead_email ?? 'N/A'}\n`;
+    seller_message_text += `*Cidade:* ${lead.lead_city ?? 'N/A'}\n`;
+    seller_message_text += `*Modelo:* ${lead.lead_model_interest ?? 'N/A'}\n`;
+    seller_message_text += `*Pagamento:* ${lead.lead_payment_method ?? 'N/A'}\n`;
+    
+    if (lead.lead_payment_method === 'financiado') {
+      seller_message_text += `*Entrada:* R$ ${lead.lead_down_payment ?? 'N/A'}\n`;
+      seller_message_text += `*CPF:* ${lead.lead_cpf ?? 'N/A'}\n`;
+      seller_message_text += `*Nascimento:* ${lead.lead_birth_date ?? 'N/A'}\n`;
+    }
+    
+    seller_message_text += `\n*ID:* ${handoff_short_id}\n`;
+    seller_message_text += `*Link WhatsApp:* ${link}\n\n`;
+    seller_message_text += `Responda com o comando + ID:\n`;
+    seller_message_text += `1 ${handoff_short_id} = Aceitar\n`;
+    seller_message_text += `2 ${handoff_short_id} = Agendar visita\n`;
+    seller_message_text += `3 ${handoff_short_id} = Venda realizada\n`;
+    seller_message_text += `4 ${handoff_short_id} = Não conseguiu contato`;
 
     return res.status(200).json({
       lead_id: lead.id,
