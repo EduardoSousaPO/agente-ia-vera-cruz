@@ -10,10 +10,14 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 - [x] Chat 3 (Implementação) — código DB, API e frontend  
 - [x] Refresh visual do frontend (layout e design system Notion + Asana)  
 - [x] Migrations aplicadas no Supabase (projeto `nwhzcvdsfcioepxucrfr`)  
+- [x] Sprint 4 (Deploy e integração) — Vercel, SuperAgentes, WhatsApp
+- [x] Login email/senha + controle de acesso gestor/vendedor
+- [x] APIs com upsert automático (leads_qualify, leads_handoff)
+- [x] Instruções do agente otimizadas (mensagens curtas, diretas)
 
 ### Próximo passo imediato
 
-**Sprint 4 — Deploy e integração:** fazer deploy na Vercel, configurar variáveis de ambiente e conectar o agente no SuperAgentes (HTTP Tool + Evolution QR). Detalhes na seção [Sprint 4](#sprint-4--deploy-e-integração) abaixo.
+**Sprint 5 — Validação e go-live:** Monitorar conversas reais, ajustar comportamento do agente conforme feedback, liberar para uso em produção.
 
 ---
 
@@ -24,10 +28,10 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 | 0      | Preparação e contratos  | **Concluído** | PRD, SDD, contratos (DB/API), ambiente     |
 | 1      | Pesquisa + SPEC         | **Concluído** | Chat 1 + Chat 2 (lista fechada de arquivos) |
 | 2      | Banco de dados          | **Concluído** | Migrations e aplicação no Supabase          |
-| 3      | Implementação (código) | **Concluído** | Chat 3 — API + frontend conforme SPEC       |
+| 3      | Implementação (código)  | **Concluído** | Chat 3 — API + frontend conforme SPEC       |
 | 3.1    | Refresh de design UI    | **Concluído** | Layout e design system do Mini-CRM          |
-| 4      | Deploy e integração     | **Pendente**  | Vercel, env, SuperAgentes (HTTP + WhatsApp) |
-| 5      | Validação e go-live     | **Pendente**  | Testes, Magic Link, comandos, métricas      |
+| 4      | Deploy e integração     | **Concluído** | Vercel, env, SuperAgentes (HTTP + WhatsApp) |
+| 5      | Validação e go-live     | **Em andamento** | Testes reais, ajustes do agente, go-live |
 
 ---
 
@@ -182,10 +186,18 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 
 ## Sprint 4 — Deploy e integração
 
-**Status:** Pendente  
+**Status:** Concluído  
 
 **O que já foi feito:**
-- [ ] Nada ainda. Próximo passo do projeto.
+- [x] Deploy na Vercel com variáveis de ambiente configuradas.
+- [x] Frontend acessível em https://agente-ia-vera-cruz.vercel.app
+- [x] APIs funcionando: contacts_role, leads_upsert, leads_qualify, leads_handoff, vendors_command.
+- [x] SuperAgentes configurado com 5 ferramentas HTTP.
+- [x] Conhecimento (catálogo EFFA) cadastrado no SuperAgentes.
+- [x] WhatsApp conectado via Evolution QR.
+- [x] Login alterado de Magic Link para email/senha (facilitar testes).
+- [x] Controle de acesso por perfil (gestor vê tudo, vendedor vê só seus leads).
+- [x] Envio automático de WhatsApp ao vendedor no handoff via Super Agentes Campaigns API.
 
 **Objetivo:** App no ar na Vercel e agente no SuperAgentes chamando a API e conectado ao WhatsApp.
 
@@ -225,10 +237,16 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 
 ## Sprint 5 — Validação e go-live
 
-**Status:** Pendente  
+**Status:** Em andamento  
 
 **O que já foi feito:**
-- [ ] Nada ainda (depende da conclusão da Sprint 4).
+- [x] Login por email/senha funcionando (gestor@veracruz.com, vendedor@veracruz.teste).
+- [x] Fluxo lead via WhatsApp testado (coleta de dados, qualificação).
+- [x] Handoff com round-robin e notificação WhatsApp ao vendedor.
+- [x] Comandos do vendedor (1/2/3/4 + ID) funcionando.
+- [x] APIs corrigidas para criar lead automaticamente se não existir (upsert).
+- [x] Instruções do agente otimizadas para mensagens curtas e diretas.
+- [ ] Monitorar conversas reais e ajustar comportamento do agente conforme feedback.
 
 **Objetivo:** Validar fluxos de ponta a ponta e liberar uso real.
 
@@ -271,9 +289,9 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 | 4 | **Banco** — Migrations no repo e aplicação no Supabase. | Concluído |
 | 5 | **Código** — Chat 3: API + frontend conforme SPEC; build e lint ok. | Concluído |
 | 5.1 | **UI Refresh** — design system e layout Notion + Asana no frontend. | Concluído |
-| 6 | **Deploy** — Vercel (env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRM_API_KEY). | Pendente |
-| 7 | **SuperAgentes** — HTTP Tool (base URL + X-CRM-API-KEY), conhecimento Effa, Evolution QR. | Pendente |
-| 8 | **Validação** — Auth, fluxo lead, handoff, comandos vendedor, métricas. | Pendente |
+| 6 | **Deploy** — Vercel (env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, CRM_API_KEY). | Concluído |
+| 7 | **SuperAgentes** — HTTP Tool (5 ferramentas), conhecimento Effa, Evolution QR. | Concluído |
+| 8 | **Validação** — Auth email/senha, fluxo lead, handoff, comandos vendedor. | Em andamento |
 | 9 | **Go-live** — Liberar para uso real e monitorar. | Pendente |
 
 ---
