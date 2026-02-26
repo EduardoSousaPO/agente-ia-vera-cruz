@@ -2,6 +2,10 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireCrmApiKey } from './_lib/auth.js';
 import { supabase } from './_lib/db.js';
 
+function shortId(uuid: string): string {
+  return uuid.replace(/-/g, '').slice(0, 6).toUpperCase();
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method !== 'POST') {
@@ -28,16 +32,59 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     };
     Object.keys(update).forEach((k) => update[k] === undefined && delete update[k]);
 
-    const { data: lead, error } = await supabase
+    // Primeiro, tenta encontrar o lead existente
+    const { data: existing } = await supabase
       .from('leads')
-      .update(update)
-      .eq('lead_phone', lead_phone)
       .select('id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at')
-      .single();
+      .eq('lead_phone', lead_phone)
+      .maybeSingle();
 
-    if (error || !lead) {
-      console.error('leads_qualify update error:', error);
-      return res.status(404).json({ error: 'Lead não encontrado' });
+    let lead;
+
+    if (existing) {
+      // Lead existe, faz update
+      const { data: updated, error } = await supabase
+        .from('leads')
+        .update(update)
+        .eq('lead_phone', lead_phone)
+        .select('id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at')
+        .single();
+
+      if (error || !updated) {
+        console.error('leads_qualify update error:', error);
+        return res.status(500).json({ error: 'Erro ao atualizar lead' });
+      }
+      lead = updated;
+    } else {
+      // Lead não existe, cria um novo
+      const insertPayload = {
+        lead_phone,
+        lead_name: body.lead_name ?? null,
+        lead_city: body.lead_city ?? null,
+        lead_model_interest: body.lead_model_interest ?? null,
+        lead_timeframe: body.lead_timeframe ?? null,
+        lead_payment_method: body.lead_payment_method ?? null,
+        lead_has_cnpj: body.lead_has_cnpj ?? null,
+        lead_best_contact_time: body.lead_best_contact_time ?? null,
+        lead_notes: body.lead_notes ?? null,
+        lead_stage: 'new',
+        updated_at: new Date().toISOString(),
+      };
+
+      const { data: inserted, error: insertError } = await supabase
+        .from('leads')
+        .insert(insertPayload)
+        .select('id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at')
+        .single();
+
+      if (insertError || !inserted) {
+        console.error('leads_qualify insert error:', insertError);
+        return res.status(500).json({ error: 'Erro ao criar lead' });
+      }
+
+      // Gera o short_id para o novo lead
+      await supabase.from('leads').update({ handoff_short_id: shortId(inserted.id) }).eq('id', inserted.id);
+      lead = inserted;
     }
 
     const hasRequired =
