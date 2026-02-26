@@ -4,6 +4,12 @@
       "runtime": "@vercel/node@3.2.0"
     }
   },
+  "crons": [
+    {
+      "path": "/api/sync_conversations",
+      "schedule": "*/10 * * * *"
+    }
+  ],
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api/$1" },
     { "source": "/(.*)", "destination": "/index.html" }
