@@ -13,6 +13,7 @@ type AuthContextType = {
   loading: boolean;
   isGestor: boolean;
   isVendedor: boolean;
+  isAuthenticated: boolean;
   signOut: () => Promise<void>;
 };
 
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     if (!supabase) {
@@ -34,6 +36,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!email) {
         if (isMounted) {
           setUser(null);
+          setIsAuthenticated(false);
           setLoading(false);
         }
         return;
@@ -53,12 +56,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           } else {
             setUser(null);
           }
+          setIsAuthenticated(true);
           setLoading(false);
         }
       } catch (err) {
         console.error('Erro ao carregar perfil:', err);
         if (isMounted) {
           setUser(null);
+          setIsAuthenticated(true);
           setLoading(false);
         }
       }
@@ -67,11 +72,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     async function initAuth() {
       try {
         const { data: { session } } = await supabase!.auth.getSession();
-        await loadUserProfile(session?.user?.email);
+        if (session?.user?.email) {
+          await loadUserProfile(session.user.email);
+        } else {
+          if (isMounted) {
+            setUser(null);
+            setIsAuthenticated(false);
+            setLoading(false);
+          }
+        }
       } catch (err) {
         console.error('Erro ao inicializar auth:', err);
         if (isMounted) {
           setUser(null);
+          setIsAuthenticated(false);
           setLoading(false);
         }
       }
@@ -79,10 +93,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     initAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      if (isMounted) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (!isMounted) return;
+      
+      if (event === 'SIGNED_OUT') {
+        setUser(null);
+        setIsAuthenticated(false);
+        setLoading(false);
+        return;
+      }
+
+      if (session?.user?.email) {
         setLoading(true);
-        await loadUserProfile(session?.user?.email);
+        await loadUserProfile(session.user.email);
       }
     });
 
@@ -96,6 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (supabase) {
       await supabase.auth.signOut();
       setUser(null);
+      setIsAuthenticated(false);
     }
   }
 
@@ -104,6 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading,
     isGestor: user?.role === 'gestor',
     isVendedor: user?.role === 'vendedor',
+    isAuthenticated,
     signOut,
   };
 

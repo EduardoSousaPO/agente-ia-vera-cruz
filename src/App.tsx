@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import supabase, { isSupabaseConfigured } from './lib/supabase';
 import { AuthProvider, useAuth } from './lib/AuthContext';
@@ -53,43 +52,17 @@ function AcessoNegado() {
 }
 
 function Protegida({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
-  const [sessionChecked, setSessionChecked] = useState(false);
-  const [hasSession, setHasSession] = useState(false);
+  const { user, loading, isAuthenticated } = useAuth();
 
-  useEffect(() => {
-    if (!supabase) {
-      setSessionChecked(true);
-      return;
-    }
-
-    supabase.auth.getSession()
-      .then(({ data: { session } }) => {
-        setHasSession(!!session);
-      })
-      .catch(() => {
-        setHasSession(false);
-      })
-      .finally(() => {
-        setSessionChecked(true);
-      });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      setHasSession(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (!sessionChecked || loading) {
+  if (loading) {
     return <div className="loading-wrap">Carregando…</div>;
   }
 
-  if (!hasSession) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (hasSession && !user) {
+  if (isAuthenticated && !user) {
     return <AcessoNegado />;
   }
 
