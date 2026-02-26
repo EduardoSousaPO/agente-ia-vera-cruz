@@ -26,13 +26,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!supabase) {
+      console.log('[AuthContext] Supabase não configurado');
       setLoading(false);
       return;
     }
 
     let isMounted = true;
+    let loadingTimeout: ReturnType<typeof setTimeout>;
 
     async function loadUserProfile(email: string | undefined) {
+      console.log('[AuthContext] loadUserProfile chamado para:', email);
       if (!email) {
         if (isMounted) {
           setUser(null);
@@ -43,12 +46,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       try {
+        console.log('[AuthContext] Consultando app_users...');
         const { data: profile, error } = await supabase!
           .from('app_users')
           .select('email, role, name, seller_id')
           .eq('email', email)
           .eq('is_active', true)
           .maybeSingle();
+
+        console.log('[AuthContext] Resposta app_users:', { profile, error });
 
         if (isMounted) {
           if (profile && !error) {
@@ -60,7 +66,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setLoading(false);
         }
       } catch (err) {
-        console.error('Erro ao carregar perfil:', err);
+        console.error('[AuthContext] Erro ao carregar perfil:', err);
         if (isMounted) {
           setUser(null);
           setIsAuthenticated(true);
@@ -70,8 +76,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     async function initAuth() {
+      console.log('[AuthContext] initAuth iniciando...');
       try {
         const { data: { session } } = await supabase!.auth.getSession();
+        console.log('[AuthContext] getSession resultado:', { hasSession: !!session, email: session?.user?.email });
+        
         if (session?.user?.email) {
           await loadUserProfile(session.user.email);
         } else {
@@ -82,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           }
         }
       } catch (err) {
-        console.error('Erro ao inicializar auth:', err);
+        console.error('[AuthContext] Erro ao inicializar auth:', err);
         if (isMounted) {
           setUser(null);
           setIsAuthenticated(false);
@@ -91,9 +100,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
 
+    loadingTimeout = setTimeout(() => {
+      console.log('[AuthContext] Timeout de segurança atingido');
+      if (isMounted && loading) {
+        setLoading(false);
+      }
+    }, 5000);
+
     initAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[AuthContext] onAuthStateChange:', event);
       if (!isMounted) return;
       
       if (event === 'SIGNED_OUT') {
@@ -103,7 +120,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      if (session?.user?.email) {
+      if (event === 'SIGNED_IN' && session?.user?.email) {
         setLoading(true);
         await loadUserProfile(session.user.email);
       }
@@ -111,6 +128,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       isMounted = false;
+      clearTimeout(loadingTimeout);
       subscription.unsubscribe();
     };
   }, []);
