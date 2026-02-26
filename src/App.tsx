@@ -53,23 +53,35 @@ function AcessoNegado() {
 }
 
 function Protegida({ children }: { children: React.ReactNode }) {
-  const [sessionLoading, setSessionLoading] = useState(true);
+  const { user, loading } = useAuth();
+  const [sessionChecked, setSessionChecked] = useState(false);
   const [hasSession, setHasSession] = useState(false);
-  const { user, loading: profileLoading } = useAuth();
 
   useEffect(() => {
-    if (!supabase) return;
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!supabase) {
+      setSessionChecked(true);
+      return;
+    }
+
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setHasSession(!!session);
+      })
+      .catch(() => {
+        setHasSession(false);
+      })
+      .finally(() => {
+        setSessionChecked(true);
+      });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setHasSession(!!session);
-      setSessionLoading(false);
     });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, s) => {
-      setHasSession(!!s);
-    });
+
     return () => subscription.unsubscribe();
   }, []);
 
-  if (sessionLoading || profileLoading) {
+  if (!sessionChecked || loading) {
     return <div className="loading-wrap">Carregando…</div>;
   }
 
@@ -77,7 +89,7 @@ function Protegida({ children }: { children: React.ReactNode }) {
     return <Navigate to="/login" replace />;
   }
 
-  if (!user) {
+  if (hasSession && !user) {
     return <AcessoNegado />;
   }
 
