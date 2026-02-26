@@ -288,5 +288,6 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 | `docs/DESIGN_SYSTEM.md` | Tipografia, cores, espaçamento, layout e componentes (referência Asana). |
 | `docs/DATABASE_SCHEMA.md` | Tabelas, colunas, função round-robin. |
 | `docs/API_CONTRACT.md` | Endpoints e header X-CRM-API-KEY. |
+| `docs/SUPERAGENTES_CONFIG.md` | Configuração do agente no Super Agentes (ferramentas HTTP, URL base, headers). |
 | `docs/DECISIONS.md` | Decisões técnicas (rotas, segurança, handoff). |
 | `docs/SPRINTS.md` | Este arquivo — passos e sprints do início ao go-live. |
