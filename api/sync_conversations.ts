@@ -18,44 +18,9 @@ function shortId(uuid: string): string {
   return uuid.replace(/-/g, '').slice(0, 6).toUpperCase();
 }
 
-function normalizePhone(phone: string): string {
-  let normalized = phone.replace(/\D/g, '');
-  
-  if (!normalized.startsWith('55')) {
-    normalized = '55' + normalized;
-  }
-  
-  if (normalized.length === 12) {
-    const ddd = normalized.slice(2, 4);
-    const number = normalized.slice(4);
-    if (number.length === 8 && !number.startsWith('9')) {
-      normalized = '55' + ddd + '9' + number;
-    }
-  }
-  
-  return normalized;
-}
-
-function getPhoneVariants(phone: string): string[] {
-  const normalized = normalizePhone(phone);
-  const variants = new Set<string>();
-  
-  variants.add(normalized);
-  variants.add('+' + normalized);
-  
-  if (normalized.length === 13) {
-    const without9 = normalized.slice(0, 4) + normalized.slice(5);
-    variants.add(without9);
-    variants.add('+' + without9);
-  }
-  
-  if (normalized.length === 12) {
-    const with9 = normalized.slice(0, 4) + '9' + normalized.slice(4);
-    variants.add(with9);
-    variants.add('+' + with9);
-  }
-  
-  return Array.from(variants);
+function getLast8Digits(phone: string): string {
+  const digits = phone.replace(/\D/g, '');
+  return digits.slice(-8);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -112,18 +77,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         continue;
       }
 
-      const normalizedPhone = normalizePhone(phone);
-      const phoneVariants = getPhoneVariants(phone);
+      const last8 = getLast8Digits(phone);
       const name = conv.contactInfo?.name || null;
       const email = conv.contactInfo?.email || null;
 
-      console.log(`[sync] Processando conversa: phone=${phone}, normalized=${normalizedPhone}, variants=${phoneVariants.join(',')}, name=${name}`);
+      console.log(`[sync] Processando conversa: phone=${phone}, last8=${last8}, name=${name}`);
 
-      const orConditions = phoneVariants.map(p => `lead_phone.eq.${p}`).join(',');
       const { data: existing } = await supabase
         .from('leads')
-        .select('id, lead_name, lead_email')
-        .or(orConditions)
+        .select('id, lead_name, lead_email, lead_phone')
+        .like('lead_phone', `%${last8}`)
         .maybeSingle();
 
       if (existing) {
@@ -145,6 +108,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
       } else {
         console.log(`[sync] Lead não encontrado, criando novo...`);
+        const phoneDigits = phone.replace(/\D/g, '');
+        const normalizedPhone = phoneDigits.startsWith('55') ? phoneDigits : '55' + phoneDigits;
+        
         const { data: newLead, error: insertError } = await supabase
           .from('leads')
           .insert({
