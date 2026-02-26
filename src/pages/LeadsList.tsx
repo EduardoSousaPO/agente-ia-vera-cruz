@@ -12,7 +12,7 @@ type Lead = {
   lead_model_interest: string | null;
   lead_payment_method: string | null;
   created_at: string;
-  sellers?: { name: string } | null;
+  sellers?: { name: string } | { name: string }[] | null;
 };
 
 export default function LeadsList() {
@@ -121,7 +121,7 @@ export default function LeadsList() {
                 <td>{l.lead_stage || '—'}</td>
                 <td>{l.lead_model_interest || '—'}</td>
                 <td>{l.lead_payment_method || '—'}</td>
-                {isGestor && <td>{l.sellers?.name || '—'}</td>}
+                {isGestor && <td>{Array.isArray(l.sellers) ? l.sellers[0]?.name : l.sellers?.name || '—'}</td>}
                 <td>
                   {l.created_at ? new Date(l.created_at).toLocaleDateString('pt-BR') : '—'}
                 </td>
