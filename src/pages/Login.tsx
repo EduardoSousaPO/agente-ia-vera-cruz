@@ -12,7 +12,10 @@ export default function Login() {
   useEffect(() => {
     if (!supabase) return;
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) navigate('/leads', { replace: true });
+      if (session) {
+        console.log('[Login] Sessão existente encontrada, redirecionando...');
+        navigate('/leads', { replace: true });
+      }
     });
   }, [navigate]);
 
@@ -21,6 +24,7 @@ export default function Login() {
     if (!supabase) return;
     setErro('');
     setLoading(true);
+    console.log('[Login] Tentando login...');
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
@@ -28,7 +32,10 @@ export default function Login() {
         password: senha,
       });
 
+      console.log('[Login] Resposta do Supabase:', { data: !!data, error: !!error, hasSession: !!data?.session });
+
       if (error) {
+        console.error('[Login] Erro:', error.message);
         setLoading(false);
         if (error.message === 'Invalid login credentials') {
           setErro('Email ou senha incorretos');
@@ -38,16 +45,18 @@ export default function Login() {
         return;
       }
 
-      if (data.session) {
+      if (data?.session) {
+        console.log('[Login] Login OK, navegando para /leads');
         navigate('/leads', { replace: true });
       } else {
+        console.log('[Login] Login sem sessão');
         setLoading(false);
         setErro('Erro ao fazer login. Tente novamente.');
       }
     } catch (err) {
+      console.error('[Login] Erro inesperado:', err);
       setLoading(false);
       setErro('Erro inesperado. Tente novamente.');
-      console.error('Login error:', err);
     }
   }
 
