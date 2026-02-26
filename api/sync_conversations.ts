@@ -20,13 +20,42 @@ function shortId(uuid: string): string {
 
 function normalizePhone(phone: string): string {
   let normalized = phone.replace(/\D/g, '');
-  if (normalized.startsWith('55') && normalized.length >= 12) {
-    return normalized;
+  
+  if (!normalized.startsWith('55')) {
+    normalized = '55' + normalized;
   }
-  if (normalized.length === 11 || normalized.length === 10) {
-    return '55' + normalized;
+  
+  if (normalized.length === 12) {
+    const ddd = normalized.slice(2, 4);
+    const number = normalized.slice(4);
+    if (number.length === 8 && !number.startsWith('9')) {
+      normalized = '55' + ddd + '9' + number;
+    }
   }
+  
   return normalized;
+}
+
+function getPhoneVariants(phone: string): string[] {
+  const normalized = normalizePhone(phone);
+  const variants = new Set<string>();
+  
+  variants.add(normalized);
+  variants.add('+' + normalized);
+  
+  if (normalized.length === 13) {
+    const without9 = normalized.slice(0, 4) + normalized.slice(5);
+    variants.add(without9);
+    variants.add('+' + without9);
+  }
+  
+  if (normalized.length === 12) {
+    const with9 = normalized.slice(0, 4) + '9' + normalized.slice(4);
+    variants.add(with9);
+    variants.add('+' + with9);
+  }
+  
+  return Array.from(variants);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -84,16 +113,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const normalizedPhone = normalizePhone(phone);
-      const phoneWithPlus = '+' + normalizedPhone;
+      const phoneVariants = getPhoneVariants(phone);
       const name = conv.contactInfo?.name || null;
       const email = conv.contactInfo?.email || null;
 
-      console.log(`[sync] Processando conversa: phone=${phone}, normalized=${normalizedPhone}, name=${name}`);
+      console.log(`[sync] Processando conversa: phone=${phone}, normalized=${normalizedPhone}, variants=${phoneVariants.join(',')}, name=${name}`);
 
+      const orConditions = phoneVariants.map(p => `lead_phone.eq.${p}`).join(',');
       const { data: existing } = await supabase
         .from('leads')
         .select('id, lead_name, lead_email')
-        .or(`lead_phone.eq.${normalizedPhone},lead_phone.eq.${phoneWithPlus}`)
+        .or(orConditions)
         .maybeSingle();
 
       if (existing) {
