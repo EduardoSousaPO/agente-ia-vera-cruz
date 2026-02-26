@@ -39,7 +39,7 @@ export default function Login() {
       }
 
       if (data.session) {
-        window.location.href = '/leads';
+        navigate('/leads', { replace: true });
       } else {
         setLoading(false);
         setErro('Erro ao fazer login. Tente novamente.');
