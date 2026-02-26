@@ -6,6 +6,46 @@ function shortId(uuid: string): string {
   return uuid.replace(/-/g, '').slice(0, 6).toUpperCase();
 }
 
+async function sendWhatsAppToSeller(sellerPhone: string, message: string): Promise<boolean> {
+  const apiKey = process.env.SUPERAGENTES_API_KEY;
+  const agentId = process.env.SUPERAGENTES_AGENT_ID;
+
+  if (!apiKey || !agentId) {
+    console.error('SUPERAGENTES_API_KEY ou SUPERAGENTES_AGENT_ID não configurados');
+    return false;
+  }
+
+  try {
+    const response = await fetch('https://dash.superagentes.ai/api/campaigns/new', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        agentId,
+        name: `Handoff Lead - ${new Date().toISOString()}`,
+        useAgentContacts: false,
+        manualPhoneNumbers: [sellerPhone],
+        message,
+        autoDispatch: true,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.text();
+      console.error('Erro ao enviar mensagem Super Agentes:', response.status, errorData);
+      return false;
+    }
+
+    console.log('Mensagem enviada ao vendedor com sucesso');
+    return true;
+  } catch (err) {
+    console.error('Erro ao chamar API Super Agentes:', err);
+    return false;
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     if (req.method !== 'POST') {
@@ -99,12 +139,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     seller_message_text += `3 ${handoff_short_id} = Venda realizada\n`;
     seller_message_text += `4 ${handoff_short_id} = Não conseguiu contato`;
 
+    const sellerPhoneFormatted = seller.phone_e164 ?? seller.phone;
+    const messageSent = await sendWhatsAppToSeller(sellerPhoneFormatted, seller_message_text);
+
     return res.status(200).json({
       lead_id: lead.id,
       handoff_short_id,
       assigned_seller_name: seller.name,
       assigned_seller_phone: phoneDisplay,
       seller_message_text,
+      whatsapp_notification_sent: messageSent,
     });
   } catch (err) {
     console.error('leads_handoff unexpected error:', err);
