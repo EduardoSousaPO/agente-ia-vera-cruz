@@ -36,7 +36,7 @@
 - id (uuid, PK)
 - created_at
 - lead_id (uuid, FK leads)
-- event_type (text) — ex.: `message_in`, `message_out`, `qualification_update`, `handoff`, `vendor_command`, `note`
+- event_type (text) — ex.: `message_in`, `message_out`, `qualification_update`, `handoff`, `handoff_notification`, `qualification_handoff_error`, `vendor_command`, `note`
 - actor_type (text) — `ai`, `seller`, `system`, `admin`
 - actor_phone (text)
 - payload (jsonb)

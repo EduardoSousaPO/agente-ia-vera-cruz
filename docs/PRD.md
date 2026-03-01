@@ -44,7 +44,8 @@ A IA deve:
 A IA deve ir salvando os dados no CRM, via **HTTP Tool**.
 
 **Definição de “qualificado” (MVP):**
-- modelo + cidade + prazo + pagamento + telefone (já existe) preenchidos.
+- modelo + cidade + forma de pagamento + telefone (já existe) preenchidos.
+- prazo de compra continua sendo dado desejável do processo comercial, mas não bloqueia a transição automática para handoff no MVP operacional.
 
 ### 3.2 Handoff (repasse)
 Quando qualificado:
@@ -52,6 +53,7 @@ Quando qualificado:
 - registrar atribuição no CRM;
 - gerar um **ID curto** do lead (ex.: 6 caracteres) para comandos;
 - enviar para o vendedor um resumo pronto + link rápido para WhatsApp do lead.
+- aplicar retry de envio da notificação ao vendedor e registrar telemetria de sucesso/falha para auditoria.
 
 ### 3.3 Pós‑handoff (IA continua ativa)
 A IA continua respondendo o lead, mas:

@@ -42,3 +42,13 @@
 - Sempre enviar link da ficha técnica ao mencionar modelo.
 - Salvar dados imediatamente durante a conversa, não apenas no final.
 - Não deixar cliente ir embora sem salvar dados coletados.
+
+## D10 — Blindagem qualificação → handoff
+- `leads_qualify` passa a disparar handoff automático quando o lead é qualificado e ainda não possui vendedor atribuído.
+- Objetivo: eliminar quebra operacional causada por não execução manual da ferramenta de handoff pelo agente.
+- O handoff automático usa lógica idempotente para evitar reatribuição quando já existe vendedor no lead.
+
+## D11 — Resiliência de notificação ao vendedor
+- `leads_handoff` envia notificação via Super Agentes com retry (até 3 tentativas).
+- O resultado do envio é auditado em `lead_events` (`handoff_notification`) com `sent`, `attempts`, `status_code` e `error`.
+- Falhas de auto-handoff após qualificação geram evento `qualification_handoff_error` para monitoramento.

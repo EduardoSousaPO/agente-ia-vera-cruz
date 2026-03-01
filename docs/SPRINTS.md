@@ -14,6 +14,8 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 - [x] Login email/senha + controle de acesso gestor/vendedor
 - [x] APIs com upsert automático (leads_qualify, leads_handoff)
 - [x] Instruções do agente otimizadas (mensagens curtas, diretas)
+- [x] Blindagem do fluxo qualificação → handoff automático
+- [x] Retry e telemetria de notificação no handoff (`handoff_notification`)
 
 ### Próximo passo imediato
 
@@ -246,6 +248,8 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
 - [x] Comandos do vendedor (1/2/3/4 + ID) funcionando.
 - [x] APIs corrigidas para criar lead automaticamente se não existir (upsert).
 - [x] Instruções do agente otimizadas para mensagens curtas e diretas.
+- [x] `leads_qualify` ajustado para auto-handoff (idempotente) após qualificação.
+- [x] `leads_handoff` com retry (3 tentativas) e telemetria de envio no `lead_events`.
 - [ ] Monitorar conversas reais e ajustar comportamento do agente conforme feedback.
 
 **Objetivo:** Validar fluxos de ponta a ponta e liberar uso real.
@@ -261,8 +265,9 @@ Documento que detalha **passo a passo** do projeto, dividido em sprints. Use jun
    - Verificar no CRM que o lead aparece e que a timeline (lead_events) é preenchida.
 
 3. **Handoff**  
-   - Com lead qualificado (modelo, cidade, prazo, pagamento, telefone), disparar handoff.  
-   - Conferir: vendedor atribuído (round-robin), handoff_short_id gerado, mensagem para o vendedor com resumo e link WhatsApp.
+   - Com lead qualificado (modelo, cidade, pagamento, telefone), validar handoff automático.  
+   - Conferir: vendedor atribuído (round-robin), handoff_short_id gerado, mensagem para o vendedor com resumo e link WhatsApp.  
+   - Conferir no `lead_events` os eventos `handoff_notification` e ausência de `qualification_handoff_error`.
 
 4. **Comandos do vendedor**  
    - Do número de um vendedor cadastrado, enviar no WhatsApp: `1 <ID>`, `2 <ID>`, `3 <ID>`, `4 <ID>`.  

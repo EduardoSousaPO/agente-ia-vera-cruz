@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireCrmApiKey } from './_lib/auth.js';
 import { supabase } from './_lib/db.js';
+import { executeLeadHandoff } from './leads_handoff.js';
 
 async function triggerSync(): Promise<void> {
   const baseUrl = process.env.VERCEL_URL 
@@ -13,6 +14,12 @@ async function triggerSync(): Promise<void> {
 
 function shortId(uuid: string): string {
   return uuid.replace(/-/g, '').slice(0, 6).toUpperCase();
+}
+
+function hasValue(value: unknown): boolean {
+  if (value === null || value === undefined) return false;
+  if (typeof value === 'string') return value.trim().length > 0;
+  return true;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -44,7 +51,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Primeiro, tenta encontrar o lead existente
     const { data: existing } = await supabase
       .from('leads')
-      .select('id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at')
+      .select(
+        'id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at, assigned_seller_id'
+      )
       .eq('lead_phone', lead_phone)
       .maybeSingle();
 
@@ -56,7 +65,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('leads')
         .update(update)
         .eq('lead_phone', lead_phone)
-        .select('id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at')
+        .select(
+          'id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at, assigned_seller_id'
+        )
         .single();
 
       if (error || !updated) {
@@ -83,7 +94,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data: inserted, error: insertError } = await supabase
         .from('leads')
         .insert(insertPayload)
-        .select('id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at')
+        .select(
+          'id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at, assigned_seller_id'
+        )
         .single();
 
       if (insertError || !inserted) {
@@ -97,8 +110,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     const hasRequired =
-      lead.lead_city && lead.lead_model_interest && lead.lead_timeframe && lead.lead_payment_method;
+      hasValue(lead.lead_city) &&
+      hasValue(lead.lead_model_interest) &&
+      hasValue(lead.lead_payment_method);
     let lead_stage = lead.lead_stage ?? 'new';
+    let auto_handoff_triggered = false;
+    let auto_handoff_error: string | null = null;
+    let whatsapp_notification_sent: boolean | null = null;
+
     if (hasRequired && !lead.qualified_at) {
       const { error: qualifyError } = await supabase
         .from('leads')
@@ -116,13 +135,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         lead_id: lead.id,
         event_type: 'qualification_update',
         actor_type: 'system',
-        payload: {},
+        payload: { source: 'leads_qualify' },
       });
+
+      // Blindagem do fluxo: ao qualificar, dispara handoff automaticamente.
+      if (!lead.assigned_seller_id) {
+        auto_handoff_triggered = true;
+        try {
+          const handoffResult = await executeLeadHandoff({
+            lead_phone,
+            lead_name: body.lead_name,
+            lead_city: body.lead_city,
+            lead_model_interest: body.lead_model_interest,
+            lead_payment_method: body.lead_payment_method,
+            lead_email: body.lead_email,
+            lead_cpf: body.lead_cpf,
+            lead_birth_date: body.lead_birth_date,
+            lead_down_payment: body.lead_down_payment,
+            source: 'qualify_auto',
+            skip_if_already_assigned: true,
+          });
+          lead_stage = 'handoff_sent';
+          whatsapp_notification_sent = handoffResult.whatsapp_notification_sent;
+        } catch (handoffErr) {
+          auto_handoff_error = handoffErr instanceof Error ? handoffErr.message : 'Erro no handoff automático';
+          await supabase.from('lead_events').insert({
+            lead_id: lead.id,
+            event_type: 'qualification_handoff_error',
+            actor_type: 'system',
+            payload: { error: auto_handoff_error },
+          });
+          console.error('Erro no handoff automático após qualificação:', handoffErr);
+        }
+      }
     }
 
     triggerSync().catch(err => console.error('Sync trigger error:', err));
 
-    return res.status(200).json({ lead_id: lead.id, lead_stage });
+    return res.status(200).json({
+      lead_id: lead.id,
+      lead_stage,
+      auto_handoff_triggered,
+      auto_handoff_error,
+      whatsapp_notification_sent,
+    });
   } catch (err) {
     console.error('leads_qualify unexpected error:', err);
     return res.status(500).json({ error: 'Internal server error' });
