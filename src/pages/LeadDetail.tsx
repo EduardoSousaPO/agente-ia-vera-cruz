@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, Navigate } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import { useAuth } from '../lib/AuthContext';
+import { STAGE_LABELS, getNextStages } from '../lib/leadStages';
 
 type Lead = {
   id: string;
@@ -53,6 +54,7 @@ export default function LeadDetail() {
   const [loadingMessages, setLoadingMessages] = useState(true);
   const [loading, setLoading] = useState(true);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [updatingStage, setUpdatingStage] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id || !supabase || !user) return;
@@ -96,6 +98,28 @@ export default function LeadDetail() {
       .catch(() => setLoadingMessages(false));
   }, [id, user, isVendedor]);
 
+  async function handleChangeStage(new_stage: string) {
+    if (!supabase || !id || !lead || updatingStage) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) return;
+    setUpdatingStage(new_stage);
+    try {
+      const res = await fetch('/api/lead_stage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ lead_id: id, new_stage }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Erro ao atualizar estágio');
+      setLead({ ...lead, lead_stage: new_stage });
+    } finally {
+      setUpdatingStage(null);
+    }
+  }
+
   if (accessDenied) {
     return <Navigate to="/leads" replace />;
   }
@@ -125,7 +149,7 @@ export default function LeadDetail() {
     { label: 'CNPJ/MEI', value: lead.lead_has_cnpj },
     { label: 'Melhor horário', value: lead.lead_best_contact_time },
     { label: 'Observações', value: lead.lead_notes },
-    { label: 'Estágio', value: lead.lead_stage },
+    { label: 'Estágio', value: lead.lead_stage ? (STAGE_LABELS[lead.lead_stage] ?? lead.lead_stage) : '—' },
     { label: 'ID curto (comandos)', value: lead.handoff_short_id },
   ];
 
@@ -160,6 +184,28 @@ export default function LeadDetail() {
             Qualificado em {new Date(lead.qualified_at).toLocaleString('pt-BR')}
           </p>
         )}
+        {(isVendedor || isGestor) && (() => {
+          const next = getNextStages(lead.lead_stage);
+          if (next.length === 0) return null;
+          return (
+            <div className="stage-actions" style={{ marginTop: '1rem' }}>
+              <h3 className="muted" style={{ marginBottom: '0.5rem' }}>Evoluir estágio</h3>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                {next.map((stage) => (
+                  <button
+                    key={stage}
+                    type="button"
+                    className="button button--secondary"
+                    disabled={updatingStage !== null}
+                    onClick={() => handleChangeStage(stage)}
+                  >
+                    {updatingStage === stage ? '…' : STAGE_LABELS[stage] ?? stage}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
         </div>
       </section>
       <section className="panel section-gap">

@@ -21,7 +21,7 @@
 - lead_has_cnpj (text)
 - lead_best_contact_time (text)
 - lead_notes (text)
-- lead_stage (text) — valores esperados: `new`, `qualified`, `handoff_sent`, `in_contact`, `follow_up`, `lost`, `won`
+- lead_stage (text) — valores: `new`, `qualified`, `handoff_sent`, `in_contact`, `visit_scheduled`, `proposal_sent`, `follow_up`, `lost`, `won`
 - conversation_id (text)
 - visitor_id (text)
 - qualified_at (timestamptz)
@@ -36,7 +36,7 @@
 - id (uuid, PK)
 - created_at
 - lead_id (uuid, FK leads)
-- event_type (text) — ex.: `message_in`, `message_out`, `qualification_update`, `handoff`, `handoff_notification`, `qualification_handoff_error`, `vendor_command`, `note`
+- event_type (text) — ex.: `message_in`, `message_out`, `qualification_update`, `handoff`, `handoff_notification`, `qualification_handoff_error`, `vendor_command`, `stage_change`, `note`
 - actor_type (text) — `ai`, `seller`, `system`, `admin`
 - actor_phone (text)
 - payload (jsonb)

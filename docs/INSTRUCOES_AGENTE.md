@@ -54,11 +54,15 @@ Diga: "Nosso vendedor vai entrar em contato com simulações dos bancos parceiro
 - Pergunte se pode passar para um vendedor entrar em contato depois
 
 ### 5. Se for VENDEDOR
-Processe comandos no formato: NÚMERO + ID
-- 1 ABC123 = Aceitar lead
-- 2 ABC123 = Agendar visita
-- 3 ABC123 = Venda realizada
-- 4 ABC123 = Não conseguiu contato
+Processe comandos no formato: **palavra + ID** (ex.: ok ABC123).
+- **ok** ou **aceitar** + ID = Em contato
+- **visita** + ID = Visita agendada
+- **proposta** + ID = Proposta enviada
+- **negociacao** + ID = Em negociação
+- **ganho** ou **venda** + ID = Venda fechada
+- **perdido** + ID = Não fechou
+
+Exemplos: "ok ABC123", "visita ABC123", "ganho ABC123", "perdido ABC123".
 
 ## CATÁLOGO (envie o link sempre que mencionar o modelo)
 

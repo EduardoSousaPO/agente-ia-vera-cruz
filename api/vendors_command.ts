@@ -2,12 +2,34 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { requireCrmApiKey } from './_lib/auth.js';
 import { supabase } from './_lib/db.js';
 
-const CMD_STAGE: Record<string, string> = {
+/** Palavra (minúscula) → estágio. Comandos simplificados WhatsApp. */
+const WORD_STAGE: Record<string, string> = {
+  ok: 'in_contact',
+  aceitar: 'in_contact',
+  visita: 'visit_scheduled',
+  proposta: 'proposal_sent',
+  negociacao: 'follow_up',
+  ganho: 'won',
+  venda: 'won',
+  perdido: 'lost',
+};
+
+/** Fallback: número 1–4 (compatibilidade com comandos antigos). */
+const NUM_STAGE: Record<string, string> = {
   '1': 'in_contact',
   '2': 'follow_up',
   '3': 'lost',
   '4': 'won',
 };
+
+function parseCommand(text: string): { stage: string; idShort: string } | null {
+  const parts = text.trim().split(/\s+/);
+  const first = parts[0]?.toLowerCase?.();
+  const idShort = parts[1]?.toUpperCase?.();
+  if (!idShort) return null;
+  const stage = WORD_STAGE[first] ?? NUM_STAGE[parts[0]];
+  return stage ? { stage, idShort } : null;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
@@ -16,11 +38,28 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
     if (!requireCrmApiKey(req, res)) return;
 
-    const body = typeof req.body === 'object' && req.body !== null ? req.body : {};
-    const seller_phone = body.seller_phone?.trim?.();
-    const command_text = body.command_text?.trim?.();
+    let body: Record<string, unknown> = {};
+    if (typeof req.body === 'object' && req.body !== null) {
+      body = req.body as Record<string, unknown>;
+    } else if (typeof req.body === 'string') {
+      try {
+        body = JSON.parse(req.body) as Record<string, unknown>;
+      } catch {
+        return res.status(400).json({ error: 'Body JSON inválido' });
+      }
+    }
+
+    const seller_phone = typeof body.seller_phone === 'string' ? body.seller_phone.trim() : '';
+    const command_text = typeof body.command_text === 'string' ? body.command_text.trim() : '';
     if (!seller_phone || !command_text) {
       return res.status(400).json({ error: 'seller_phone e command_text são obrigatórios' });
+    }
+
+    const parsed = parseCommand(command_text);
+    if (!parsed) {
+      return res.status(400).json({
+        error: 'Comando inválido. Use: <palavra> <ID> (ex.: ok ABC123, visita ABC123, ganho ABC123, perdido ABC123). Palavras: ok, aceitar, visita, proposta, negociacao, ganho, venda, perdido.',
+      });
     }
 
     const { data: seller, error: sellerError } = await supabase
@@ -39,16 +78,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(403).json({ error: 'Número não é de vendedor cadastrado' });
     }
 
-    const parts = command_text.split(/\s+/);
-    const cmd = parts[0];
-    const idShort = parts[1]?.toUpperCase?.();
-    const new_stage = cmd ? CMD_STAGE[cmd] : null;
-
-    if (!new_stage || !idShort) {
-      return res.status(400).json({
-        error: 'Comando inválido. Use: 1|2|3|4 <ID> (ex.: 1 ABC123)',
-      });
-    }
+    const { stage: new_stage, idShort } = parsed;
 
     const { data: leads, error: leadsError } = await supabase
       .from('leads')
@@ -87,7 +117,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       event_type: 'vendor_command',
       actor_type: 'seller',
       actor_phone: seller_phone,
-      payload: { command: cmd, new_stage },
+      payload: { command_text: command_text.trim(), new_stage },
     });
 
     return res.status(200).json({ ok: true, new_stage, lead_id: lead.id });

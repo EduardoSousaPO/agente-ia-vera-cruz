@@ -55,13 +55,32 @@ Resposta:
 ## POST /vendors_command
 Body:
 - `seller_phone` (E.164)
-- `command_text` (ex.: "1 ABC123")
+- `command_text` — formato: **uma palavra + espaço + ID do lead** (ex.: "ok ABC123", "visita ABC123")
 
-Comandos:
-- 1 = Aceitar (in_contact)
-- 2 = Agendar visita (follow_up)
-- 3 = Venda realizada (won)
-- 4 = Não conseguiu contato (lost)
+Comandos (palavras, sem acento, minúsculas):
+- **ok**, **aceitar** → Em contato (in_contact)
+- **visita** → Visita agendada (visit_scheduled)
+- **proposta** → Proposta enviada (proposal_sent)
+- **negociacao** → Em negociação (follow_up)
+- **ganho**, **venda** → Venda fechada (won)
+- **perdido** → Não fechou (lost)
+
+Compatibilidade: ainda aceita formato antigo **número + ID** (1=in_contact, 2=follow_up, 3=lost, 4=won).
 
 Resposta:
 - `{ ok: true, new_stage, lead_id }`
+
+## POST /lead_stage (portal CRM)
+Autenticação: header `Authorization: Bearer <access_token>` (JWT do Supabase Auth da sessão do usuário logado).
+
+Body (JSON):
+- `lead_id` (uuid do lead)
+- `new_stage` (um de: in_contact, visit_scheduled, proposal_sent, follow_up, won, lost)
+
+Comportamento: valida que o usuário é vendedor (lead atribuído a ele) ou gestor; atualiza `lead_stage`, `last_contact_at` e, se for primeira ação do vendedor, `seller_first_action_at`; registra evento em `lead_events` (event_type: stage_change).
+
+Resposta:
+- `{ ok: true, new_stage }`
+- 401 se token ausente/inválido
+- 403 se lead não atribuído ao vendedor ou usuário não autorizado
+- 400 se lead_id/new_stage ausentes ou new_stage inválido

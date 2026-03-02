@@ -92,24 +92,20 @@ Registro da configuração do agente **Vera Cruz** na plataforma Super Agentes, 
 
 ---
 
-### 5. Processar comando do vendedor ⏳ A CONFIGURAR
+### 5. Processar comando do vendedor ✅ ATUALIZAR DESCRIÇÃO
 
 | Campo | Valor |
 |-------|--------|
 | **Nome** | `Processar comando do vendedor` |
-| **Descrição** | Usada quando um vendedor envia um comando numérico (1, 2, 3 ou 4) seguido do ID do lead. Atualiza o status do atendimento conforme o comando. |
+| **Descrição** | Usada quando um vendedor envia um comando para atualizar o estágio do lead no CRM. Formato: **uma palavra + espaço + ID do lead** (ex.: "ok ABC123", "visita ABC123"). Repasse a mensagem do vendedor em `command_text` e o telefone dele em `seller_phone`. |
 | **URL** | `https://agente-ia-vera-cruz.vercel.app/api/vendors_command` |
 | **Método** | **POST** |
 | **Body (Chave Valor)** | Todos com "Usuário deve configurar o valor": |
 | | `seller_phone` — telefone do vendedor E.164 |
-| | `command_text` — comando (ex.: "1 ABC123") |
+| | `command_text` — comando (ex.: "ok ABC123", "visita ABC123", "ganho ABC123", "perdido ABC123") |
 | **Headers** | `X-CRM-API-KEY`: `veracruz_2026`, `Content-Type`: `application/json` |
 
-**Comandos disponíveis:**
-- `1 <ID>` — Aceitar lead
-- `2 <ID>` — Agendar visita
-- `3 <ID>` — Venda realizada
-- `4 <ID>` — Não conseguiu contato
+**Palavras aceitas:** ok, aceitar, visita, proposta, negociacao, ganho, venda, perdido. Ainda aceita o formato antigo: 1, 2, 3, 4 + ID.
 
 **Resposta:** `{ ok: true, new_stage, lead_id }`
 

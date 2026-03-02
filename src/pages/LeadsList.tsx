@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import supabase from '../lib/supabase';
 import { useAuth } from '../lib/AuthContext';
+import { STAGE_LABELS, STAGE_ORDER } from '../lib/leadStages';
 
 type Lead = {
   id: string;
@@ -49,7 +50,8 @@ export default function LeadsList() {
     });
   }, [filtroStage, busca, user, isVendedor]);
 
-  const stages = ['new', 'qualified', 'handoff_sent', 'in_contact', 'follow_up', 'lost', 'won'];
+  const stages = STAGE_ORDER;
+  const stageOptions = stages.map((s) => ({ value: s, label: STAGE_LABELS[s] ?? s }));
 
   return (
     <div>
@@ -80,9 +82,9 @@ export default function LeadsList() {
           onChange={(e) => setFiltroStage(e.target.value)}
         >
           <option value="">Todos os estágios</option>
-          {stages.map((s) => (
-            <option key={s} value={s}>
-              {s}
+          {stageOptions.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
             </option>
           ))}
         </select>
@@ -118,7 +120,7 @@ export default function LeadsList() {
                 </td>
                 <td>{l.lead_phone}</td>
                 <td>{l.lead_city || '—'}</td>
-                <td>{l.lead_stage || '—'}</td>
+                <td>{l.lead_stage ? (STAGE_LABELS[l.lead_stage] ?? l.lead_stage) : '—'}</td>
                 <td>{l.lead_model_interest || '—'}</td>
                 <td>{l.lead_payment_method || '—'}</td>
                 {isGestor && <td>{Array.isArray(l.sellers) ? l.sellers[0]?.name : l.sellers?.name || '—'}</td>}

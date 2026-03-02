@@ -60,6 +60,28 @@ VALUES (
 
 ---
 
+## Logins dos 10 vendedores (Grupo Vera Cruz)
+
+Os logins abaixo foram criados pela migração `supabase/migrations/0003_app_users_vendedores_grupo_veracruz.sql`. Cada vendedor acessa o portal com o **email** (Magic Link) e vê **somente os leads destinados a ele**.
+
+| Nome completo | E-mail (login) | Perfil |
+|---------------|----------------|--------|
+| Sara Cristina de castro gomes | atendimento@grupoveracruz.com.br | vendedor |
+| Natanael Londres dos santos | vendas@grupoveracruz.com.br | vendedor |
+| Hugo Alexandre da Silva | vendas1@grupoveracruz.com.br | vendedor |
+| Caio Cesar Graciano Guimaraes Sousa | vendas2@grupoveracruz.com.br | vendedor |
+| Leonardo Mendonça Soares | vendas3@grupoveracruz.com.br | vendedor |
+| Sandra da Cruz Pereira | financiamento@grupoveracruz.com.br | vendedor |
+| Marieli Aparecida Padilha | sofinanciamento@grupoveracruz.com.br | vendedor |
+| Luciano Alves Borges | vendas5@grupoveracruz.com.br | vendedor |
+| Raul Marques | vendas4@grupoveracruz.com.br | vendedor |
+| Divino Nunes | veracruzdiretoria@hotmail.com | vendedor |
+
+**Como aplicar:** rode a migração no Supabase (Dashboard → SQL Editor, colar o conteúdo de `0003_app_users_vendedores_grupo_veracruz.sql`) ou use `supabase db push` se usar CLI.  
+**Telefones placeholder:** os 5 vendedores novos (Sara, Hugo, Caio, Sandra, Divino) foram criados na tabela `sellers` com telefones temporários (+5562999999001 … 9005). Atualize no Supabase com os celulares reais para que o handoff e os comandos WhatsApp funcionem corretamente.
+
+---
+
 ## Exemplo Completo - Cadastrar Todos
 
 ```sql

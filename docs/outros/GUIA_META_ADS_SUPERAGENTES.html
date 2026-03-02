@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guia Meta Ads + Super Agentes | Vera Cruz Seminovos</title>
+    <style>
+        :root {
+            --primary: #25D366;
+            --primary-dark: #128C7E;
+            --secondary: #1877F2;
+            --bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-muted: #6c757d;
+            --border: #e9ecef;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 0 0 20px 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+
+        .alert {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 5px;
+        }
+
+        .alert p {
+            color: #856404;
+            font-size: 0.95rem;
+        }
+
+        .alert code {
+            background: rgba(0,0,0,0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--secondary), #4267B2);
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .card-header.whatsapp {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+
+        .card-header.test {
+            background: linear-gradient(135deg, #6f42c1, #9561e2);
+        }
+
+        .card-header.check {
+            background: linear-gradient(135deg, var(--success), #20c997);
+        }
+
+        .card-header.trouble {
+            background: linear-gradient(135deg, var(--danger), #e83e8c);
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        h3 {
+            color: var(--text);
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        h3:first-child {
+            margin-top: 0;
+        }
+
+        ol, ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        strong {
+            color: var(--primary-dark);
+        }
+
+        code {
+            background: #e9ecef;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+            color: #d63384;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            background: var(--bg);
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .check-icon {
+            color: var(--success);
+        }
+
+        .x-icon {
+            color: var(--danger);
+        }
+
+        .checkbox-list {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .checkbox-list li {
+            padding: 10px 15px;
+            background: var(--bg);
+            margin-bottom: 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-list input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary);
+        }
+
+        .tip {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.95rem;
+        }
+
+        .tip strong {
+            color: #0c5460;
+        }
+
+        .explanation-box {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .explanation-box h4 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+        }
+
+        .references {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .references h3 {
+            border-bottom: none;
+            margin-bottom: 15px;
+        }
+
+        .references a {
+            color: var(--secondary);
+            text-decoration: none;
+            display: block;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .references a:hover {
+            color: var(--primary-dark);
+        }
+
+        .references a:last-child {
+            border-bottom: none;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .card-header h2 {
+                font-size: 1.1rem;
+            }
+
+            table {
+                font-size: 0.85rem;
+            }
+
+            th, td {
+                padding: 8px 10px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .checkbox-list input[type="checkbox"] {
+                -webkit-appearance: none;
+                border: 2px solid #333;
+                width: 16px;
+                height: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>📱 Guia Meta Ads + Super Agentes</h1>
+        <p>Configuração para Click-to-WhatsApp funcionar com o agente Vera Cruz</p>
+    </header>
+
+    <div class="container">
+        <div class="alert">
+            <div class="alert-title">⚠️ Problema Identificado</div>
+            <p>Mensagens vindas de Click-to-WhatsApp Ads contêm um campo <code>referral</code> no webhook que a Evolution API pode não processar. A solução é usar <strong>mensagem pré-preenchida</strong> nos anúncios.</p>
+        </div>
+
+        <!-- PARTE 1 -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📘 Parte 1: Configuração no Meta Ads Manager</h2>
+            </div>
+            <div class="card-body">
+                <h3>Passo 1: Acessar o Gerenciador de Anúncios</h3>
+                <ol>
+                    <li>Acesse <a href="https://business.facebook.com" target="_blank">business.facebook.com</a></li>
+                    <li>Clique em <strong>Gerenciador de Anúncios</strong> (Ads Manager)</li>
+                    <li>Selecione a conta de anúncios da Vera Cruz</li>
+                </ol>
+
+                <h3>Passo 2: Criar/Editar Campanha Click-to-WhatsApp</h3>
+                <p><strong>Se for criar nova campanha:</strong></p>
+                <ol>
+                    <li>Clique em <strong>+ Criar</strong></li>
+                    <li>Escolha o objetivo: <strong>Engajamento</strong> ou <strong>Leads</strong></li>
+                    <li>Em <strong>Destino da conversão</strong>, selecione <strong>Apps de mensagens</strong></li>
+                    <li>Escolha <strong>WhatsApp</strong></li>
+                </ol>
+
+                <p><strong>Se for editar campanha existente:</strong></p>
+                <ol>
+                    <li>Vá em <strong>Campanhas</strong> → selecione sua campanha ativa</li>
+                    <li>Clique em <strong>Editar</strong></li>
+                    <li>Navegue até o nível de <strong>Anúncio</strong></li>
+                </ol>
+
+                <h3>Passo 3: Configurar a Mensagem Pré-preenchida (CRÍTICO)</h3>
+                <p>No nível do <strong>Anúncio</strong>, procure a seção <strong>Destino</strong>:</p>
+                <ol>
+                    <li>Em <strong>Modelo de mensagem</strong> ou <strong>Iniciar conversa</strong>, procure:
+                        <ul>
+                            <li>"Mensagem pré-preenchida" ou</li>
+                            <li>"Mensagem de saudação" ou</li>
+                            <li>"Criar fluxo" → "Mensagem inicial"</li>
+                        </ul>
+                    </li>
+                    <li><strong>Desative</strong> qualquer "Fluxo automatizado" do Meta (se houver)</li>
+                    <li>Em <strong>Mensagem que o cliente envia</strong>, digite:</li>
+                </ol>
+
+                <div class="code-block">Oi! Vi o anúncio e quero saber mais sobre os caminhões EFFA.</div>
+
+                <div class="tip">
+                    <strong>💡 Dica:</strong> Use mensagens diferentes por campanha para rastrear qual anúncio converte mais!
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Campanha</th>
+                            <th>Mensagem Pré-preenchida</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Geral</td>
+                            <td><code>Oi! Vi o anúncio e quero saber mais sobre os caminhões EFFA.</code></td>
+                        </tr>
+                        <tr>
+                            <td>V21</td>
+                            <td><code>Olá! Tenho interesse no V21 que vi no anúncio.</code></td>
+                        </tr>
+                        <tr>
+                            <td>V21 Baú</td>
+                            <td><code>Oi! Quero saber mais sobre o V21 Baú do anúncio.</code></td>
+                        </tr>
+                        <tr>
+                            <td>V25 Furgão</td>
+                            <td><code>Olá! Vi o V25 Furgão no anúncio e quero mais informações.</code></td>
+                        </tr>
+                        <tr>
+                            <td>Financiamento</td>
+                            <td><code>Oi! Vi o anúncio e quero simular um financiamento.</code></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Passo 4: Verificar Número do WhatsApp</h3>
+                <ol>
+                    <li>Em <strong>Número do WhatsApp</strong>, confirme que está selecionado o <strong>mesmo número</strong> conectado ao Super Agentes</li>
+                    <li>Se não estiver, clique em <strong>Alterar</strong> e selecione o número correto</li>
+                </ol>
+
+                <h3>Passo 5: Salvar e Publicar</h3>
+                <ol>
+                    <li>Clique em <strong>Publicar</strong> ou <strong>Atualizar</strong></li>
+                    <li>Aguarde a aprovação do anúncio (geralmente minutos a horas)</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- PARTE 2 -->
+        <div class="card">
+            <div class="card-header whatsapp">
+                <h2>💬 Parte 2: Verificações no Super Agentes</h2>
+            </div>
+            <div class="card-body">
+                <h3>Passo 1: Verificar Conexão do WhatsApp</h3>
+                <ol>
+                    <li>No Super Agentes, acesse seu agente <strong>"agente de vendas Vera Cruz"</strong></li>
+                    <li>Vá na aba <strong>Ambientes</strong></li>
+                    <li>Em <strong>WhatsApp</strong>, verifique:
+                        <ul>
+                            <li>Status deve estar <strong>"Conectado"</strong> (verde)</li>
+                            <li>Se estiver desconectado, reconecte via QR Code</li>
+                        </ul>
+                    </li>
+                </ol>
+
+                <h3>Passo 2: Verificar Configurações do WhatsApp</h3>
+                <ol>
+                    <li>Na aba <strong>Ambientes</strong> → <strong>WhatsApp</strong></li>
+                    <li>Clique no ícone de <strong>engrenagem</strong> (configurações)</li>
+                    <li>Configure assim:</li>
+                </ol>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Configuração</th>
+                            <th>Valor Recomendado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Dividir mensagens longas</strong></td>
+                            <td><span class="check-icon">✅</span> Ativado</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tamanho máximo por mensagem</strong></td>
+                            <td><code>300</code></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tempo de espera</strong></td>
+                            <td><code>10</code> segundos</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Intervenção Automática</strong></td>
+                            <td><span class="x-icon">❌</span> Desativado</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Passo 3: Verificar Ferramentas HTTP</h3>
+                <p>Na aba <strong>Ferramentas</strong>, confirme que estão ativas:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ferramenta</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Consultar papel do contato</td>
+                            <td><span class="check-icon">✅</span> Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Cadastrar ou atualizar lead</td>
+                            <td><span class="check-icon">✅</span> Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Fazer handoff para vendedor</td>
+                            <td><span class="check-icon">✅</span> Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Qualificar lead</td>
+                            <td><span class="check-icon">✅</span> Ativo</td>
+                        </tr>
+                        <tr>
+                            <td>Processar comando do vendedor</td>
+                            <td><span class="check-icon">✅</span> Ativo</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Passo 4: Verificar Variáveis Internas</h3>
+                <ol>
+                    <li>Clique em <strong>Variáveis Internas</strong> (internal-vars)</li>
+                    <li>Certifique-se de que está <strong>ativo</strong> (toggle ligado)</li>
+                    <li>Isso permite que o agente acesse <code>{{user-phone-number}}</code> automaticamente</li>
+                </ol>
+
+                <h3>Passo 5: Verificar Instruções do Agente</h3>
+                <ol>
+                    <li>Vá na aba <strong>Instruções</strong></li>
+                    <li>Confirme que o prompt está configurado conforme <code>INSTRUCOES_AGENTE.md</code></li>
+                    <li>O início da conversa deve usar <strong>"Consultar papel do contato"</strong> automaticamente</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- PARTE 3 -->
+        <div class="card">
+            <div class="card-header test">
+                <h2>🧪 Parte 3: Teste da Solução</h2>
+            </div>
+            <div class="card-body">
+                <h3>Teste 1: Mensagem Normal (controle)</h3>
+                <ol>
+                    <li>Pegue um número que <strong>nunca</strong> conversou com o agente</li>
+                    <li>Envie uma mensagem direta pelo WhatsApp: <code>Oi, quero saber sobre os caminhões</code></li>
+                    <li><strong>Esperado:</strong> Agente responde normalmente</li>
+                </ol>
+
+                <h3>Teste 2: Via Link wa.me</h3>
+                <ol>
+                    <li>Abra no navegador:</li>
+                </ol>
+                <div class="code-block">https://wa.me/5562XXXXXXXXX?text=Oi!%20Quero%20saber%20sobre%20os%20caminh%C3%B5es%20EFFA</div>
+                <ol start="2">
+                    <li>(substitua <code>5562XXXXXXXXX</code> pelo número do WhatsApp do agente)</li>
+                    <li>Clique em "Enviar" no WhatsApp</li>
+                    <li><strong>Esperado:</strong> Agente responde normalmente</li>
+                </ol>
+
+                <h3>Teste 3: Via Anúncio (após configurar)</h3>
+                <ol>
+                    <li>Acesse o anúncio no Facebook/Instagram com outro celular</li>
+                    <li>Clique no botão do WhatsApp</li>
+                    <li>A mensagem pré-preenchida deve aparecer</li>
+                    <li>Clique em <strong>Enviar</strong></li>
+                    <li><strong>Esperado:</strong> Agente responde normalmente</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- PARTE 4 -->
+        <div class="card">
+            <div class="card-header check">
+                <h2>✅ Checklist Final</h2>
+            </div>
+            <div class="card-body">
+                <ul class="checkbox-list">
+                    <li>
+                        <input type="checkbox" id="check1">
+                        <label for="check1">Número do WhatsApp no Meta Ads = número no Super Agentes</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check2">
+                        <label for="check2">Mensagem pré-preenchida configurada no anúncio</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check3">
+                        <label for="check3">Fluxo automatizado do Meta DESATIVADO</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check4">
+                        <label for="check4">Conexão WhatsApp no Super Agentes = Conectado (verde)</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check5">
+                        <label for="check5">Tempo de espera = 10 segundos</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check6">
+                        <label for="check6">Ferramentas HTTP ativas</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check7">
+                        <label for="check7">Variáveis Internas ativas</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check8">
+                        <label for="check8">Teste com mensagem normal funcionou</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check9">
+                        <label for="check9">Teste via wa.me funcionou</label>
+                    </li>
+                    <li>
+                        <input type="checkbox" id="check10">
+                        <label for="check10">Teste via anúncio funcionou</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TROUBLESHOOTING -->
+        <div class="card">
+            <div class="card-header trouble">
+                <h2>🔧 Troubleshooting</h2>
+            </div>
+            <div class="card-body">
+                <h3>"Agente não responde mesmo com mensagem pré-preenchida"</h3>
+                <ol>
+                    <li>Verifique se a conexão WhatsApp não caiu (reconecte se necessário)</li>
+                    <li>Verifique os logs em <strong>Conversas</strong> no Super Agentes</li>
+                    <li>Teste com mensagem normal para isolar o problema</li>
+                </ol>
+
+                <h3>"Mensagem pré-preenchida não aparece no anúncio"</h3>
+                <ol>
+                    <li>Verifique se salvou as alterações no Meta Ads</li>
+                    <li>O anúncio pode estar em revisão - aguarde aprovação</li>
+                    <li>Limpe o cache do app WhatsApp e teste novamente</li>
+                </ol>
+
+                <h3>"Número do anúncio diferente do Super Agentes"</h3>
+                <ol>
+                    <li>No Meta Business Suite, vá em <strong>Configurações</strong> → <strong>WhatsApp</strong></li>
+                    <li>Verifique qual número está conectado</li>
+                    <li>Use o mesmo número no Super Agentes</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- EXPLICAÇÃO -->
+        <div class="explanation-box">
+            <h4>💡 Por Que Isso Funciona?</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo de Entrada</th>
+                        <th>Campo <code>referral</code></th>
+                        <th>Agente Responde?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mensagem normal</td>
+                        <td><span class="x-icon">❌</span> Não tem</td>
+                        <td><span class="check-icon">✅</span> Sim</td>
+                    </tr>
+                    <tr>
+                        <td>Link wa.me</td>
+                        <td><span class="x-icon">❌</span> Não tem</td>
+                        <td><span class="check-icon">✅</span> Sim</td>
+                    </tr>
+                    <tr>
+                        <td>Mensagem pré-preenchida (ads)</td>
+                        <td><span class="x-icon">❌</span> Não tem</td>
+                        <td><span class="check-icon">✅</span> Sim</td>
+                    </tr>
+                    <tr>
+                        <td>CTWA puro (sem pré-preenchida)</td>
+                        <td><span class="check-icon">✅</span> Tem</td>
+                        <td><span class="x-icon">❌</span> Não (problema)</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 15px;">A mensagem pré-preenchida é enviada pelo usuário como uma <strong>mensagem de texto normal</strong>, sem os metadados de <code>referral</code> que a Evolution API pode não processar.</p>
+        </div>
+
+        <!-- REFERÊNCIAS -->
+        <div class="references">
+            <h3>📚 Referências</h3>
+            <a href="https://docs.superagentes.ai" target="_blank">📖 Documentação Super Agentes</a>
+            <a href="https://developers.facebook.com/docs/marketing-api/ad-creative/messaging-ads/click-to-whatsapp/" target="_blank">📘 Meta Ads - Click to WhatsApp</a>
+            <a href="https://doc.evolution-api.com/v1/en/configuration/webhooks" target="_blank">⚙️ Evolution API - Webhooks</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Vera Cruz Seminovos | Guia de Configuração Meta Ads + Super Agentes</p>
+        <p>Última atualização: Fevereiro 2026</p>
+    </footer>
+</body>
+</html>
