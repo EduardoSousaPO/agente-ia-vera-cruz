@@ -9,4 +9,5 @@ Alinhado à documentação oficial (docs.superagentes.ai):
 - **Conhecimento**: Ferramenta Conhecimento com datastore “Vera Cruz — Effa (catálogo + FAQ)”.
 - **Variáveis**: usar para dados do lead (nome, cidade, modelo, prazo, pagamento, etc.); descrições claras para o agente.
 - **Estágios**: opcional para fluxo qualificação → handoff → pós-handoff; configurar na aba do agente.
+- **Follow-ups**: Ferramenta Follow Up; 3 no dia 1 (2–3h, 6–8h, fim do dia) + 3 no dia 2 (manhã, tarde, fim do dia); variáveis `{{user-name}}`, `{{nome_cliente}}`; PRD §3.7 e SUPERAGENTES_CONFIG.md.
 - Não inventar endpoints ou propriedades; em dúvida, registrar em DECISIONS.md.

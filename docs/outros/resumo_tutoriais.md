@@ -117,6 +117,7 @@ Referência: [docs.superagentes.ai](https://docs.superagentes.ai/introduction), 
 4. **Base de Conhecimento** — Conectar conhecimento Effa (catálogo, FAQ, endereço, horários).
 5. **Ambientes** — WhatsApp: **Adicionar conta** → **Evolution QR** → Gerar QR e escanear.
 6. **Estágios** (opcional) — Estágios de conversa (qualificação → handoff → pós-handoff).
+7. **Follow-ups** — Ferramentas → Follow Up; 6 configurados (2h, 6h, 10h, 1d, 1d6h, 1d12h); ver `SUPERAGENTES_CONFIG.md`.
 
 ## 3. Erro "Testar API" 500 ou ERR_CONNECTION_TIMED_OUT
 

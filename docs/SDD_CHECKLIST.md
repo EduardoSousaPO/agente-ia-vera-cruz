@@ -27,3 +27,6 @@ Saída: SPEC.md
 - Criar/modificar só arquivos listados
 - Se erro: corrigir só o erro
 - Em UI: validar desktop e mobile
+
+## Config SuperAgentes (fora de SPEC)
+- Follow-ups: 6 configurados (2h, 6h, 10h, 1d, 1d6h, 1d12h) — `SUPERAGENTES_CONFIG.md`

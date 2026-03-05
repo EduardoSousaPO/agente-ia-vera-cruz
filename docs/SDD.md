@@ -7,6 +7,7 @@
 Antes de qualquer ação:
 - Leia: `PRD.md`, `SPEC.md`, `SDD.md`, `DESIGN_SYSTEM.md` (quando houver UI) e `.cursor/*.mdc`.
 - Defina: “qual feature estou fazendo agora?”
+- **Features de configuração** (ex.: follow-ups no SuperAgentes, variáveis, estágios): não exigem SPEC de código; seguir PRD §3.7 e `SUPERAGENTES_CONFIG.md`.
 
 ## Chat 1 — Pesquisa (explorar)
 Objetivo: entender contexto e mapear impactos.
@@ -55,3 +56,4 @@ Checklist:
 - Fluxos do PRD funcionam.
 - Nenhum arquivo extra criado.
 - Se houver mudança visual, consistência de layout desktop/mobile validada.
+- **Config SuperAgentes:** Follow-ups (6), variáveis, ferramentas HTTP conforme `SUPERAGENTES_CONFIG.md`.

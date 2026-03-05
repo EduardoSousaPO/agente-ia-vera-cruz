@@ -117,6 +117,38 @@ Registro da configuração do agente **Vera Cruz** na plataforma Super Agentes, 
 - **2026-02-26:** Alterado método de GET para POST em `contacts_role` porque Super Agentes remove o `+` de query params.
 - **2026-02-26:** Corrigido deploy Vercel (Node.js 20.x, imports ESM com `.js`).
 - **Primeira configuração:** ferramenta "Consultar papel do contato" criada.
+- **2026-03:** Follow-ups configurados (6 no total: 3 no dia 1 + 3 no dia 2) conforme PRD §3.7.
+
+---
+
+---
+
+## Follow-ups (PRD §3.7, DECISIONS D12) ✅ CONFIGURADO
+
+**Formato obrigatório:** 6 follow-ups por conversa — 3 no dia 1 + 3 no dia 2.
+
+### Configuração implementada (2026-03)
+
+| # | Objetivo | Tempo de espera |
+|---|----------|-----------------|
+| 1 | Reengajar lead que não respondeu em 2–3 horas | 0d 2h 0m 0s |
+| 2 | Segunda tentativa de reengajamento no mesmo dia | 0d 6h 0m 0s |
+| 3 | Última tentativa de reengajamento no dia da primeira mensagem | 0d 10h 0m 0s |
+| 4 | Retomar contato no dia seguinte pela manhã | 1d 0h 0m 0s |
+| 5 | Segunda tentativa de reengajamento no dia seguinte | 1d 6h 0m 0s |
+| 6 | Última tentativa de reengajamento no dia seguinte | 1d 12h 0m 0s |
+
+### Mensagem padrão (usada nos objetivos)
+
+```
+Olá! Vi que você entrou em contato sobre os caminhões EFFA. Ainda posso ajudar com modelos, preços ou financiamento. Responda aqui! 🚗
+```
+
+### Onde configurar
+
+1. **Ferramentas** → **Follow Up** → clicar para abrir.
+2. Para cada follow-up: preencher **Objetivo** (incluir a mensagem acima) e **Tempo de espera** (dias, horas, minutos, segundos).
+3. Clicar **Adicionar** após cada um. Ao final, **Salvar** na tela de Ferramentas.
 
 ---
 
@@ -127,6 +159,7 @@ Registro da configuração do agente **Vera Cruz** na plataforma Super Agentes, 
 - [ ] Ferramenta 3: Qualificar lead
 - [ ] Ferramenta 4: Fazer handoff para vendedor
 - [ ] Ferramenta 5: Processar comando do vendedor
+- [x] Configurar Follow-ups (6 no total)
 - [ ] Configurar Base de Conhecimento
 - [ ] Configurar Variáveis do agente
 - [ ] Testar fluxo completo com WhatsApp

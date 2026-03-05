@@ -52,3 +52,10 @@
 - `leads_handoff` envia notificação via Super Agentes com retry (até 3 tentativas).
 - O resultado do envio é auditado em `lead_events` (`handoff_notification`) com `sent`, `attempts`, `status_code` e `error`.
 - Falhas de auto-handoff após qualificação geram evento `qualification_handoff_error` para monitoramento.
+
+## D12 — Follow-ups automáticos
+- Follow-ups são configurados **na plataforma SuperAgentes** (Ferramenta Follow Up), não no backend do CRM.
+- Formato obrigatório: **3 follow-ups no dia 1** (2h, 6h, 10h) + **3 follow-ups no dia 2** (1d, 1d6h, 1d12h).
+- Gatilho: primeira mensagem recebida do lead. Delay configurado em relação à criação da conversa.
+- Mensagem padrão: "Olá! Vi que você entrou em contato sobre os caminhões EFFA. Ainda posso ajudar com modelos, preços ou financiamento. Responda aqui! 🚗"
+- Config implementada: `SUPERAGENTES_CONFIG.md` (2026-03).

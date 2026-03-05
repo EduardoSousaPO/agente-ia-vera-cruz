@@ -86,9 +86,25 @@ A IA valida se o número é de vendedor cadastrado e atualiza o CRM.
 - Responsividade obrigatória: funcionamento completo em desktop e mobile sem quebra de navegação.
 - Consistência: todas as páginas autenticadas devem compartilhar o mesmo sistema de layout/tokens.
 
+### 3.7 Follow-ups automáticos (SuperAgentes)
+Configurados na plataforma SuperAgentes (Ferramentas → Follow Up). Objetivo: reengajar leads que não responderam ou abandonaram a conversa.
+
+**Formato e frequência obrigatórios:**
+
+| Dia | Quantidade | Períodos sugeridos | Objetivo |
+|-----|------------|--------------------|----------|
+| **Dia 1** (recebeu 1ª mensagem) | 3 follow-ups | 2–3h após 1ª msg; 6–8h após; fim do dia (~18h) | Reengajar no mesmo dia |
+| **Dia 2** | 3 follow-ups | Manhã (~9h); tarde (~14h); fim do dia (~18h) | Retomar no dia seguinte |
+
+**Total:** 6 follow-ups por conversa (3 no dia 1 + 3 no dia 2).
+
+**Regras:**
+- Mensagens curtas (máx. 2 linhas), alinhadas ao tom do agente.
+- Usar variáveis quando disponíveis: `{{user-name}}`, `{{nome_cliente}}`, `{{lead_model_interest}}`.
+- Referência de configuração: `docs/outros/SUPERAGENTES_CONFIG.md` (seção Follow-ups).
+
 ## 4) Fora de escopo (agora)
 - Integração automática com estoque/ERP.
-- Automação avançada de follow‑ups.
 - Multi‑empresa / multi‑tenant.
 - Funil complexo (tarefas, etapas, etc.).
 - Canais além do WhatsApp.
