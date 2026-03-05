@@ -144,11 +144,23 @@ Registro da configuração do agente **Vera Cruz** na plataforma Super Agentes, 
 Olá! Vi que você entrou em contato sobre os caminhões EFFA. Ainda posso ajudar com modelos, preços ou financiamento. Responda aqui! 🚗
 ```
 
+### Restrição de horário
+
+**Horário de envio:** somente entre 07:00 e 21:00. Configurar na plataforma (se disponível na interface de Follow Up ou nas Configurações do WhatsApp > Intervenção automática).
+
 ### Onde configurar
 
 1. **Ferramentas** → **Follow Up** → clicar para abrir.
 2. Para cada follow-up: preencher **Objetivo** (incluir a mensagem acima) e **Tempo de espera** (dias, horas, minutos, segundos).
 3. Clicar **Adicionar** após cada um. Ao final, **Salvar** na tela de Ferramentas.
+
+### Alterações (2026-03)
+- Nome da IA: **Dulce** (era Vera).
+- Saudação: "seja bem-vindo ao Grupo Vera Cruz".
+- V22 Baú (R$ 121.980) adicionado ao catálogo.
+- Preço: não informar proativamente.
+- Financiamento: até 60x, com ou sem entrada, a partir de R$1, 1ª parcela em 60 dias.
+- Qualificação: perguntar CPF ou CNPJ.
 
 ---
 
@@ -156,10 +168,11 @@ Olá! Vi que você entrou em contato sobre os caminhões EFFA. Ainda posso ajuda
 
 - [x] Ferramenta 1: Consultar papel do contato
 - [x] Ferramenta 2: Cadastrar ou atualizar lead
-- [ ] Ferramenta 3: Qualificar lead
-- [ ] Ferramenta 4: Fazer handoff para vendedor
-- [ ] Ferramenta 5: Processar comando do vendedor
+- [x] Ferramenta 3: Qualificar lead
+- [x] Ferramenta 4: Fazer handoff para vendedor
+- [x] Ferramenta 5: Processar comando do vendedor
 - [x] Configurar Follow-ups (6 no total)
-- [ ] Configurar Base de Conhecimento
-- [ ] Configurar Variáveis do agente
+- [x] Variáveis Internas ativadas
+- [x] Instruções atualizadas (Dulce, V22 Baú, CPF/CNPJ, preço passivo, 60x)
+- [ ] Atualizar Base de Conhecimento (V22 Baú, financiamento CPF/CNPJ)
 - [ ] Testar fluxo completo com WhatsApp

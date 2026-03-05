@@ -28,18 +28,21 @@ Entregar uma solução composta por:
 ## 3) Escopo (MVP)
 
 ### 3.1 Atendimento e qualificação (IA)
-A IA deve:
+A IA (nome: **Dulce**) deve:
+- abrir com "seja bem-vindo ao Grupo Vera Cruz";
 - conversar em português simples;
 - entender o interesse (modelo e uso);
+- **não informar preço proativamente** (só quando o lead perguntar);
 - coletar **campos mínimos**:
   - nome (se possível)
   - cidade/bairro
-  - modelo de interesse (V21 / V21 Baú / V22 / Furgão)
+  - modelo de interesse (V21 Carroceria / V21 Baú / V22 Carroceria / V22 Baú / V25 Furgão)
   - prazo de compra (hoje / 7 dias / 30 dias / 90+)
   - forma de pagamento (financiamento / à vista / consórcio)
-  - possui CNPJ/MEI? (sim/não)
+  - CPF ou CNPJ? (se financiado: CPF + nascimento; se CNPJ: CNPJ + CPF representante + nascimento)
   - melhor horário para contato
   - observações
+- informar condições de financiamento: até 60x, com ou sem entrada (a partir de R$1), 1ª parcela em até 60 dias.
 
 A IA deve ir salvando os dados no CRM, via **HTTP Tool**.
 
@@ -101,6 +104,7 @@ Configurados na plataforma SuperAgentes (Ferramentas → Follow Up). Objetivo: r
 **Regras:**
 - Mensagens curtas (máx. 2 linhas), alinhadas ao tom do agente.
 - Usar variáveis quando disponíveis: `{{user-name}}`, `{{nome_cliente}}`, `{{lead_model_interest}}`.
+- **Horário de envio:** somente entre 07:00 e 21:00.
 - Referência de configuração: `docs/outros/SUPERAGENTES_CONFIG.md` (seção Follow-ups).
 
 ## 4) Fora de escopo (agora)

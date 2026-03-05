@@ -37,9 +37,11 @@
 - Mensagem inclui: dados do lead, link WhatsApp, comandos disponíveis (1/2/3/4 + ID).
 
 ## D9 — Comportamento do agente (instruções)
+- Nome da IA: **Dulce** (saudação: "seja bem-vindo ao Grupo Vera Cruz").
 - Mensagens curtas: máximo 2 linhas (exceto explicação de veículo).
 - Se cliente já sabe o modelo, ir direto para qualificação financeira.
 - Sempre enviar link da ficha técnica ao mencionar modelo.
+- **Não informar preço proativamente** (só quando perguntado).
 - Salvar dados imediatamente durante a conversa, não apenas no final.
 - Não deixar cliente ir embora sem salvar dados coletados.
 
@@ -57,5 +59,24 @@
 - Follow-ups são configurados **na plataforma SuperAgentes** (Ferramenta Follow Up), não no backend do CRM.
 - Formato obrigatório: **3 follow-ups no dia 1** (2h, 6h, 10h) + **3 follow-ups no dia 2** (1d, 1d6h, 1d12h).
 - Gatilho: primeira mensagem recebida do lead. Delay configurado em relação à criação da conversa.
+- **Horário de envio:** somente entre 07:00 e 21:00.
 - Mensagem padrão: "Olá! Vi que você entrou em contato sobre os caminhões EFFA. Ainda posso ajudar com modelos, preços ou financiamento. Responda aqui! 🚗"
 - Config implementada: `SUPERAGENTES_CONFIG.md` (2026-03).
+
+## D13 — Nome da IA e boas-vindas
+- Nome da IA alterado de **Vera** para **Dulce**.
+- Saudação obrigatória: "seja bem-vindo ao Grupo Vera Cruz".
+- Referência: print do cliente (2026-03).
+
+## D14 — Preço: informar somente quando perguntado
+- A IA não deve informar preço proativamente.
+- Quando o lead perguntar, nunca se recusar a informar.
+
+## D15 — Catálogo atualizado (V22 Baú)
+- Adicionado modelo V22 Baú (5 lugares, R$ 121.980).
+- Catálogo: V21 Carroceria, V21 Baú, V22 Carroceria, V22 Baú, V25 Furgão.
+
+## D16 — Qualificação financeira: CPF ou CNPJ
+- Se financiado por CPF: coletar CPF + data de nascimento.
+- Se financiado por CNPJ: coletar CNPJ + CPF do representante + nascimento do representante.
+- Condições: até 60x, com ou sem entrada (a partir de R$1), 1ª parcela em até 60 dias.

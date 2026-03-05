@@ -2,7 +2,7 @@
 
 ## Sobre a Empresa
 
-**Vera Cruz Seminovos** é uma concessionária especializada em veículos utilitários da marca EFFA Motors, oferecendo caminhões e furgões 0KM com excelente custo-benefício para trabalho e transporte de cargas.
+**Grupo Vera Cruz** é uma concessionária especializada em veículos utilitários da marca EFFA Motors em Goiânia-GO, oferecendo caminhões e furgões 0KM com excelente custo-benefício para trabalho e transporte de cargas.
 
 ---
 
@@ -122,13 +122,13 @@
 
 ---
 
-### 3. EFFA V22 - Caminhão Cabine Dupla
+### 3. EFFA V22 Carroceria - Caminhão Cabine Dupla
 
 **Preço: R$ 103.980,00**
-**Condição: 0KM | Ano: 26/27 | Motor: 1.5**
+**Condição: 0KM | Ano: 26/27 | Motor: 1.5 | 5 Lugares**
 
 #### Para quem é ideal:
-- Quem precisa transportar mais passageiros (cabine dupla)
+- Quem precisa transportar mais passageiros (cabine dupla, 5 lugares)
 - Famílias que usam o veículo para trabalho
 - Transporte de equipe + carga
 - Quem valoriza conforto e espaço interno
@@ -179,7 +179,23 @@
 
 ---
 
-### 4. EFFA V25 Furgão - Furgão de Carga
+### 4. EFFA V22 Baú - Caminhão Cabine Dupla com Baú
+
+**Preço: R$ 121.980,00**
+**Condição: 0KM | Ano: 26/27 | Motor: 1.5 | 5 Lugares**
+
+#### Para quem é ideal:
+- Equipe + carga protegida (5 lugares com baú fechado)
+- Transporte de equipe e mercadorias sensíveis
+- Uso profissional que exige conforto e proteção da carga
+
+#### Especificações Técnicas:
+Mesmas especificações do V22 Carroceria, com baú fechado.
+Ficha: https://agente-ia-vera-cruz.vercel.app/fichas-tecnicas/effa-v22-bau.jpg
+
+---
+
+### 5. EFFA V25 Furgão - Furgão de Carga
 
 **Preço: R$ 105.980,00**
 **Condição: 0KM | Ano: 26/27 | Motor: 1.5**
@@ -275,12 +291,13 @@
 
 ## Comparativo Rápido
 
-| Modelo | Preço | Tipo | Capacidade Carga | Ideal para |
-|--------|-------|------|------------------|------------|
-| EFFA V21 | R$ 97.980 | Carroceria aberta | 1.500 kg | Cargas variadas, materiais de construção |
-| EFFA V21 Baú | R$ 113.980 | Baú fechado | 1.500 kg | Cargas protegidas, mudanças |
-| EFFA V22 | R$ 103.980 | Cabine dupla | 1.500 kg | Equipe + carga, uso familiar |
-| EFFA V25 Furgão | R$ 105.980 | Furgão fechado | 1.100 kg | Entregas, delivery, e-commerce |
+| Modelo | Preço | Tipo | Lugares | Capacidade Carga | Ideal para |
+|--------|-------|------|---------|------------------|------------|
+| EFFA V21 Carroceria | R$ 97.980 | Carroceria aberta | 2 | 1.500 kg | Cargas variadas, materiais de construção |
+| EFFA V21 Baú | R$ 113.980 | Baú fechado | 2 | 1.500 kg | Cargas protegidas, mudanças |
+| EFFA V22 Carroceria | R$ 103.980 | Cabine dupla | 5 | 1.500 kg | Equipe + carga, uso familiar |
+| EFFA V22 Baú | R$ 121.980 | Cabine dupla + baú | 5 | 1.500 kg | Equipe + carga protegida |
+| EFFA V25 Furgão | R$ 105.980 | Furgão fechado | 2 | 1.100 kg | Entregas, delivery, e-commerce |
 
 ---
 
@@ -301,9 +318,11 @@
 → EFFA V25 Furgão (4,25 m³ de espaço, mais ágil na cidade)
 
 ### Formas de Pagamento
-- Financiamento em até 60x
-- Entrada + parcelas
+- Financiamento em até 60x, com ou sem entrada (a partir de R$1), primeira parcela em até 60 dias
 - À vista com desconto especial
+- Financiamento por CPF (pessoa física) ou CNPJ (pessoa jurídica)
+- Para CPF: número do CPF + data de nascimento
+- Para CNPJ: número do CNPJ + CPF do representante + data de nascimento do representante
 
 ### Garantia
 - Garantia de fábrica EFFA Motors
