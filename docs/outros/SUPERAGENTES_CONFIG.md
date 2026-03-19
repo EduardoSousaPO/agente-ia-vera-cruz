@@ -48,14 +48,18 @@ Registro da configuração do agente **Vera Cruz** na plataforma Super Agentes, 
 | Campo | Valor |
 |-------|--------|
 | **Nome** | `Cadastrar ou atualizar lead` |
-| **Descrição** | Usada para salvar ou atualizar os dados de um lead no CRM. Deve ser chamada quando o agente coletar informações do cliente como nome, interesse, cidade, etc. Envia os dados para o banco de dados. |
+| **Descrição** | Usada para salvar ou atualizar os dados de um lead no CRM. Para À VISTA: nome; para FINANCIADO CPF: nome, CPF; para FINANCIADO CNPJ: número CNPJ, CPF do representante, data de nascimento de quem assina. NÃO pedir email nem cidade. Envia os dados para o banco de dados. |
 | **URL** | `https://agente-ia-vera-cruz.vercel.app/api/leads_upsert` |
 | **Método** | **POST** |
 | **Body (Chave Valor)** | Todos com "Usuário deve configurar o valor": |
 | | `lead_phone` — telefone E.164 (obrigatório) |
 | | `lead_name` — nome do lead |
 | | `lead_model_interest` — interesse/modelo de veículo |
-| | `lead_city` — cidade/região |
+| | `lead_city` — cidade/região (opcional, não exigido) |
+| | `lead_payment_method` — à vista ou financiado |
+| | `lead_cpf` — CPF (obrigatório para financiado) |
+| | `lead_has_cnpj` — número CNPJ (só para financiado CNPJ) |
+| | `lead_birth_date` — data nascimento DD/MM/AAAA (só para financiado CNPJ) |
 | **Headers** | `X-CRM-API-KEY`: `veracruz_2026`, `Content-Type`: `application/json` |
 
 **Resposta:** `{ lead_id, handoff_short_id, lead_stage }`
@@ -67,10 +71,10 @@ Registro da configuração do agente **Vera Cruz** na plataforma Super Agentes, 
 | Campo | Valor |
 |-------|--------|
 | **Nome** | `Qualificar lead` |
-| **Descrição** | Usada quando o agente coletou todas as informações necessárias e quer marcar o lead como qualificado. Atualiza o estágio do lead para "qualified". |
+| **Descrição** | Usada quando o agente coletou todas as informações necessárias e quer marcar o lead como qualificado. Para à vista: nome, modelo, forma pagamento. Para financiado CPF: nome, CPF, modelo, forma pagamento. Para financiado CNPJ: número CNPJ, CPF representante, data nascimento de quem assina, modelo, forma pagamento. NÃO pedir email nem cidade. Atualiza o estágio para "qualified". |
 | **URL** | `https://agente-ia-vera-cruz.vercel.app/api/leads_qualify` |
 | **Método** | **POST** |
-| **Body (Chave Valor)** | `lead_phone` — marcar "Usuário deve configurar o valor" |
+| **Body (Chave Valor)** | `lead_phone` (obrigatório); opcional: `lead_name`, `lead_cpf`, `lead_birth_date`, `lead_city`, `lead_model_interest`, `lead_payment_method` — marcar "Usuário deve configurar o valor" |
 | **Headers** | `X-CRM-API-KEY`: `veracruz_2026`, `Content-Type`: `application/json` |
 
 **Resposta:** `{ lead_id, lead_stage }`

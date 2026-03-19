@@ -45,6 +45,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       lead_has_cnpj: body.lead_has_cnpj ?? undefined,
       lead_best_contact_time: body.lead_best_contact_time ?? undefined,
       lead_notes: body.lead_notes ?? undefined,
+      lead_cpf: body.lead_cpf ?? undefined,
+      lead_birth_date: body.lead_birth_date ?? undefined,
     };
     Object.keys(update).forEach((k) => update[k] === undefined && delete update[k]);
 
@@ -52,7 +54,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const { data: existing } = await supabase
       .from('leads')
       .select(
-        'id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at, assigned_seller_id'
+        'id, lead_stage, lead_name, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_cpf, lead_birth_date, lead_has_cnpj, qualified_at, assigned_seller_id'
       )
       .eq('lead_phone', lead_phone)
       .maybeSingle();
@@ -66,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .update(update)
         .eq('lead_phone', lead_phone)
         .select(
-          'id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at, assigned_seller_id'
+          'id, lead_stage, lead_name, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_cpf, lead_birth_date, lead_has_cnpj, qualified_at, assigned_seller_id'
         )
         .single();
 
@@ -87,6 +89,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         lead_has_cnpj: body.lead_has_cnpj ?? null,
         lead_best_contact_time: body.lead_best_contact_time ?? null,
         lead_notes: body.lead_notes ?? null,
+        lead_cpf: body.lead_cpf ?? null,
+        lead_birth_date: body.lead_birth_date ?? null,
         lead_stage: 'new',
         updated_at: new Date().toISOString(),
       };
@@ -95,7 +99,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .from('leads')
         .insert(insertPayload)
         .select(
-          'id, lead_stage, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, qualified_at, assigned_seller_id'
+          'id, lead_stage, lead_name, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_cpf, lead_birth_date, lead_has_cnpj, qualified_at, assigned_seller_id'
         )
         .single();
 
@@ -109,10 +113,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       lead = inserted;
     }
 
+    const isFinanced = (lead.lead_payment_method ?? '').toLowerCase().includes('financ');
+    const isCnpj = hasValue(lead.lead_has_cnpj);
     const hasRequired =
-      hasValue(lead.lead_city) &&
       hasValue(lead.lead_model_interest) &&
-      hasValue(lead.lead_payment_method);
+      hasValue(lead.lead_payment_method) &&
+      (isFinanced
+        ? isCnpj
+          ? hasValue(lead.lead_cpf) && hasValue(lead.lead_birth_date) && hasValue(lead.lead_has_cnpj)
+          : hasValue(lead.lead_cpf)
+        : hasValue(lead.lead_name));
     let lead_stage = lead.lead_stage ?? 'new';
     let auto_handoff_triggered = false;
     let auto_handoff_error: string | null = null;
@@ -151,6 +161,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             lead_email: body.lead_email,
             lead_cpf: body.lead_cpf,
             lead_birth_date: body.lead_birth_date,
+            lead_has_cnpj: body.lead_has_cnpj,
             lead_down_payment: body.lead_down_payment,
             source: 'qualify_auto',
             skip_if_already_assigned: true,

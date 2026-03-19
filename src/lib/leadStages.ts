@@ -24,11 +24,14 @@ export const VENDOR_STAGES = [
 /** Dado o estágio atual, quais estágios podem ser escolhidos em seguida (para botões) */
 export function getNextStages(current: string | null): string[] {
   switch (current) {
+    case 'new':
+    case 'qualified':
     case 'handoff_sent':
       return ['in_contact', 'lost'];
     case 'in_contact':
-    case 'visit_scheduled':
       return ['visit_scheduled', 'proposal_sent', 'follow_up', 'won', 'lost'];
+    case 'visit_scheduled':
+      return ['proposal_sent', 'follow_up', 'won', 'lost'];
     case 'proposal_sent':
       return ['follow_up', 'won', 'lost'];
     case 'follow_up':
@@ -37,7 +40,7 @@ export function getNextStages(current: string | null): string[] {
     case 'lost':
       return [];
     default:
-      return ['in_contact', 'visit_scheduled', 'proposal_sent', 'follow_up', 'won', 'lost'];
+      return ['in_contact', 'lost'];
   }
 }
 

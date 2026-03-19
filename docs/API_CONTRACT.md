@@ -33,7 +33,7 @@ Body:
 
 Comportamento:
 - Se lead não existir, cria automaticamente (upsert).
-- Qualifica quando houver dados mínimos (`lead_city`, `lead_model_interest`, `lead_payment_method` com valor não vazio).
+- Qualifica quando houver dados mínimos: para à vista (`lead_name`, `lead_model_interest`, `lead_payment_method`); para financiado CPF (`lead_cpf`, `lead_model_interest`, `lead_payment_method`); para financiado CNPJ (`lead_has_cnpj`, `lead_cpf`, `lead_birth_date`, `lead_model_interest`, `lead_payment_method`).
 - Após qualificar, dispara handoff automático (quando ainda não houver vendedor atribuído), para evitar quebra entre qualificação e repasse.
 
 Resposta:

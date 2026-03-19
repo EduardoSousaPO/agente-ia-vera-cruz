@@ -48,6 +48,7 @@ interface ExecuteHandoffInput {
   lead_email?: string;
   lead_cpf?: string;
   lead_birth_date?: string;
+  lead_has_cnpj?: string;
   lead_down_payment?: string;
   source?: 'handoff_api' | 'qualify_auto';
   skip_if_already_assigned?: boolean;
@@ -133,7 +134,7 @@ export async function executeLeadHandoff(input: ExecuteHandoffInput): Promise<Ha
   }
 
   const selectFields =
-    'id, lead_name, lead_phone, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_email, lead_cpf, lead_birth_date, lead_down_payment, handoff_short_id, assigned_seller_id, assigned_at, handoff_at';
+    'id, lead_name, lead_phone, lead_city, lead_model_interest, lead_timeframe, lead_payment_method, lead_email, lead_cpf, lead_birth_date, lead_has_cnpj, lead_down_payment, handoff_short_id, assigned_seller_id, assigned_at, handoff_at';
 
   let { data: lead } = await supabase
     .from('leads')
@@ -153,6 +154,7 @@ export async function executeLeadHandoff(input: ExecuteHandoffInput): Promise<Ha
         lead_email: input.lead_email ?? null,
         lead_cpf: input.lead_cpf ?? null,
         lead_birth_date: input.lead_birth_date ?? null,
+        lead_has_cnpj: input.lead_has_cnpj ?? null,
         lead_down_payment: input.lead_down_payment ?? null,
         lead_stage: 'new',
       })
@@ -242,9 +244,14 @@ export async function executeLeadHandoff(input: ExecuteHandoffInput): Promise<Ha
   seller_message_text += `*Pagamento:* ${lead.lead_payment_method ?? 'N/A'}\n`;
 
   if (isFinanced(lead.lead_payment_method)) {
+    if (lead.lead_has_cnpj) {
+      seller_message_text += `*CNPJ:* ${lead.lead_has_cnpj}\n`;
+      seller_message_text += `*CPF representante:* ${lead.lead_cpf ?? 'N/A'}\n`;
+      seller_message_text += `*Nascimento (quem assina):* ${lead.lead_birth_date ?? 'N/A'}\n`;
+    } else {
+      seller_message_text += `*CPF:* ${lead.lead_cpf ?? 'N/A'}\n`;
+    }
     seller_message_text += `*Entrada:* R$ ${lead.lead_down_payment ?? 'N/A'}\n`;
-    seller_message_text += `*CPF:* ${lead.lead_cpf ?? 'N/A'}\n`;
-    seller_message_text += `*Nascimento:* ${lead.lead_birth_date ?? 'N/A'}\n`;
   }
 
   seller_message_text += `\n*ID:* ${handoff_short_id}\n`;
@@ -316,6 +323,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       lead_email: body.lead_email,
       lead_cpf: body.lead_cpf,
       lead_birth_date: body.lead_birth_date,
+      lead_has_cnpj: body.lead_has_cnpj,
       lead_down_payment: body.lead_down_payment,
       source: 'handoff_api',
       skip_if_already_assigned: false,
