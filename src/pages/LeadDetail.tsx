@@ -59,35 +59,53 @@ export default function LeadDetail() {
   useEffect(() => {
     if (!id || !supabase || !user) return;
 
-    supabase
-      .from('leads')
-      .select('*, sellers(name)')
-      .eq('id', id)
-      .single()
-      .then(({ data, error }) => {
-        if (error) {
-          setLoading(false);
-          return;
-        }
-        
-        const leadData = data as Lead;
-        
-        if (isVendedor && user.seller_id && leadData.assigned_seller_id !== user.seller_id) {
-          setAccessDenied(true);
-          setLoading(false);
-          return;
-        }
-        
-        setLead(leadData);
-        setLoading(false);
-      });
+    let aborted = false;
 
-    supabase
-      .from('lead_events')
-      .select('id, event_type, actor_type, actor_phone, payload, created_at')
-      .eq('lead_id', id)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => setEvents((data as Event[]) ?? []));
+    async function fetchLead() {
+      const { data: { session } } = await supabase!.auth.getSession();
+      if (!session?.access_token) {
+        if (!aborted) {
+          setLoading(false);
+        }
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/lead_detail?lead_id=${id}`, {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (response.status === 403) {
+          if (!aborted) {
+            setAccessDenied(true);
+            setLoading(false);
+          }
+          return;
+        }
+
+        if (!response.ok) {
+          throw new Error(payload.error || 'Erro ao carregar lead');
+        }
+
+        if (aborted) return;
+        setLead(payload.lead as Lead);
+        setEvents((payload.events ?? []) as Event[]);
+      } catch {
+        if (!aborted) {
+          setLoading(false);
+        }
+        return;
+      }
+
+      if (!aborted) {
+        setLoading(false);
+      }
+    }
+
+    fetchLead();
 
     fetch(`/api/conversation_history?lead_id=${id}`)
       .then(res => res.json())
@@ -96,11 +114,15 @@ export default function LeadDetail() {
         setLoadingMessages(false);
       })
       .catch(() => setLoadingMessages(false));
+
+    return () => {
+      aborted = true;
+    };
   }, [id, user, isVendedor]);
 
   async function handleChangeStage(new_stage: string) {
     if (!supabase || !id || !lead || updatingStage) return;
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase!.auth.getSession();
     if (!session?.access_token) return;
     setUpdatingStage(new_stage);
     try {

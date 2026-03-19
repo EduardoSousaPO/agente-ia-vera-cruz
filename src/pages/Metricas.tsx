@@ -27,18 +27,49 @@ export default function Metricas() {
       return;
     }
 
-    supabase
-      .from('leads')
-      .select('id, created_at, qualified_at, handoff_at, seller_first_action_at, lead_stage, lead_model_interest, assigned_seller_id, sellers(name)')
-      .then(({ data, error: fetchError }) => {
-        if (fetchError) {
-          setError('Falha ao carregar métricas.');
+    let aborted = false;
+
+    async function fetchMetrics() {
+      const { data: { session } } = await supabase!.auth.getSession();
+      if (!session?.access_token) {
+        if (!aborted) {
+          setError('Sessão expirada. Faça login novamente.');
           setLoading(false);
-          return;
         }
-        setLeads((data as Lead[]) ?? []);
-        setLoading(false);
-      });
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/metrics_summary', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(payload.error || 'Falha ao carregar métricas.');
+        }
+
+        if (!aborted) {
+          setLeads((payload.leads ?? []) as Lead[]);
+        }
+      } catch (err) {
+        if (!aborted) {
+          const message = err instanceof Error ? err.message : 'Falha ao carregar métricas.';
+          setError(message);
+        }
+      } finally {
+        if (!aborted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchMetrics();
+
+    return () => {
+      aborted = true;
+    };
   }, []);
 
   const sellerOptions = useMemo(() => {

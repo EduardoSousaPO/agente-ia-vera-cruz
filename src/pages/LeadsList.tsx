@@ -63,19 +63,6 @@ export default function LeadsList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!supabase || !isGestor) return;
-    supabase
-      .from('sellers')
-      .select('id, name')
-      .eq('is_active', true)
-      .order('name', { ascending: true })
-      .then(({ data, error: fetchError }) => {
-        if (fetchError) return;
-        setSellers((data as Seller[]) ?? []);
-      });
-  }, [isGestor]);
-
-  useEffect(() => {
     setPage(1);
   }, [
     viewMode,
@@ -99,68 +86,73 @@ export default function LeadsList() {
     setLoading(true);
     setError('');
 
-    let q = supabase
-      .from('leads')
-      .select('id, lead_phone, lead_name, lead_city, lead_stage, lead_model_interest, lead_payment_method, assigned_seller_id, handoff_at, seller_first_action_at, last_contact_at, created_at, sellers(id, name)')
-      .order('created_at', { ascending: false });
+    let aborted = false;
 
-    if (isVendedor && user.seller_id) {
-      q = q.eq('assigned_seller_id', user.seller_id);
-    }
-
-    if (isGestor && somenteSemVendedor) {
-      q = q.is('assigned_seller_id', null);
-    } else if (isGestor && filtroSellerId) {
-      q = q.eq('assigned_seller_id', filtroSellerId);
-    }
-
-    if (filtroStage) q = q.eq('lead_stage', filtroStage);
-    if (filtroModelo.trim()) q = q.ilike('lead_model_interest', `%${filtroModelo.trim()}%`);
-    if (filtroPagamento.trim()) q = q.ilike('lead_payment_method', `%${filtroPagamento.trim()}%`);
-    if (filtroCidade.trim()) q = q.ilike('lead_city', `%${filtroCidade.trim()}%`);
-
-    if (filtroPeriodo) {
-      const days = Number(filtroPeriodo);
-      if (!Number.isNaN(days)) {
-        const cutoff = new Date();
-        cutoff.setDate(cutoff.getDate() - days);
-        q = q.gte('created_at', cutoff.toISOString());
-      }
-    }
-
-    if (busca.trim()) {
-      const term = busca.trim().replace(/[%]/g, '');
-      q = q.or(
-        `lead_name.ilike.%${term}%,lead_phone.ilike.%${term}%,lead_city.ilike.%${term}%,lead_model_interest.ilike.%${term}%`,
-      );
-    }
-
-    if (viewMode === 'list') {
-      const start = (page - 1) * PAGE_SIZE;
-      const end = start + PAGE_SIZE - 1;
-      q = q.range(start, end);
-    } else {
-      q = q.range(0, 499);
-    }
-
-    q.then(({ data, error: fetchError }) => {
-      setLoading(false);
-      if (fetchError) {
-        setError('Falha ao carregar leads. Verifique permissões e tente novamente.');
-        setLeads([]);
-        setHasNextPage(false);
+    async function fetchLeads() {
+      const { data: { session } } = await supabase!.auth.getSession();
+      if (!session?.access_token) {
+        if (!aborted) {
+          setLoading(false);
+          setError('Sessão expirada. Faça login novamente.');
+          setLeads([]);
+          setSellers([]);
+        }
         return;
       }
 
-      const rawLeads = (data as Lead[]) ?? [];
-      let nextLeads = rawLeads;
-      if (somenteSemContato) {
-        nextLeads = nextLeads.filter(isLeadStalled);
-      }
+      const params = new URLSearchParams({
+        mode: viewMode,
+        page: String(page),
+        page_size: String(PAGE_SIZE),
+      });
 
-      setLeads(nextLeads);
-      setHasNextPage(viewMode === 'list' && rawLeads.length === PAGE_SIZE);
-    });
+      if (filtroStage) params.set('stage', filtroStage);
+      if (filtroSellerId) params.set('seller_id', filtroSellerId);
+      if (filtroModelo.trim()) params.set('model', filtroModelo.trim());
+      if (filtroPagamento.trim()) params.set('payment', filtroPagamento.trim());
+      if (filtroCidade.trim()) params.set('city', filtroCidade.trim());
+      if (filtroPeriodo) params.set('period_days', filtroPeriodo);
+      if (somenteSemContato) params.set('only_no_contact', 'true');
+      if (somenteSemVendedor) params.set('only_unassigned', 'true');
+      if (busca.trim()) params.set('search', busca.trim());
+
+      try {
+        const response = await fetch(`/api/leads_list?${params.toString()}`, {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        });
+
+        const payload = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(payload.error || 'Falha ao carregar leads.');
+        }
+
+        if (aborted) return;
+        const rawLeads = (payload.leads ?? []) as Lead[];
+        const nextLeads = somenteSemContato ? rawLeads.filter(isLeadStalled) : rawLeads;
+        setLeads(nextLeads);
+        setSellers((payload.sellers ?? []) as Seller[]);
+        setHasNextPage(Boolean(payload.has_next_page));
+      } catch (err) {
+        if (aborted) return;
+        const message = err instanceof Error ? err.message : 'Falha ao carregar leads.';
+        setError(message);
+        setLeads([]);
+        setSellers([]);
+        setHasNextPage(false);
+      } finally {
+        if (!aborted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchLeads();
+
+    return () => {
+      aborted = true;
+    };
   }, [
     viewMode,
     page,
@@ -174,13 +166,11 @@ export default function LeadsList() {
     somenteSemVendedor,
     busca,
     user,
-    isVendedor,
-    isGestor,
   ]);
 
   async function updateLeadStage(lead: Lead, newStage: string) {
     if (!supabase || updatingLeadId) return;
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { session } } = await supabase!.auth.getSession();
     if (!session?.access_token) {
       setError('Sessão expirada. Faça login novamente.');
       return;

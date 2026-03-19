@@ -29,21 +29,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  async function loadUserProfile(email: string) {
-    if (!supabase || !email) return;
-    
-    try {
-      const { data: profile, error } = await supabase
-        .from('app_users')
-        .select('email, role, name, seller_id')
-        .eq('email', email)
-        .eq('is_active', true)
-        .maybeSingle();
+  async function loadUserProfile(accessToken: string) {
+    if (!supabase || !accessToken) return;
 
-      if (profile && !error) {
-        setUser(profile as UserProfile);
+    try {
+      const response = await fetch('/api/me', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        setUser(null);
+        return;
       }
+
+      const profile = await response.json();
+      setUser(profile as UserProfile);
     } catch {
+      setUser(null);
       console.error('[AuthContext] Erro ao carregar perfil');
     }
   }
@@ -63,9 +67,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (isMounted) {
           if (session?.user?.email) {
             setIsAuthenticated(true);
-            loadUserProfile(session.user.email);
+            if (session.access_token) {
+              await loadUserProfile(session.access_token);
+            }
           } else {
             setIsAuthenticated(false);
+            setUser(null);
           }
           setLoading(false);
         }
@@ -90,7 +97,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (event === 'SIGNED_IN' && session?.user?.email) {
         setIsAuthenticated(true);
-        loadUserProfile(session.user.email);
+        if (session.access_token) {
+          await loadUserProfile(session.access_token);
+        }
       }
     });
 
@@ -111,8 +120,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function refreshProfile() {
     if (!supabase) return;
     const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user?.email) {
-      await loadUserProfile(session.user.email);
+    if (session?.access_token) {
+      await loadUserProfile(session.access_token);
     }
   }
 
