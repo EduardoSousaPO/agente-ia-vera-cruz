@@ -3,7 +3,7 @@ import supabase from './supabase';
 
 type UserProfile = {
   email: string;
-  role: 'gestor' | 'vendedor';
+  role: 'gestor' | 'vendedor' | 'admin' | 'manager';
   name: string;
   seller_id: string | null;
 };
@@ -19,6 +19,10 @@ type AuthContextType = {
 };
 
 const AuthContext = createContext<AuthContextType | null>(null);
+
+function isGestorRole(role: UserProfile['role'] | undefined): boolean {
+  return role === 'gestor' || role === 'admin' || role === 'manager';
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserProfile | null>(null);
@@ -115,7 +119,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const value: AuthContextType = {
     user,
     loading,
-    isGestor: user?.role === 'gestor',
+    isGestor: isGestorRole(user?.role),
     isVendedor: user?.role === 'vendedor',
     isAuthenticated,
     signOut,

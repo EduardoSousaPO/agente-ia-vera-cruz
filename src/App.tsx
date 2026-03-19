@@ -89,7 +89,7 @@ function LayoutPrivado() {
         <div className="sidebar-footer">
           <div className="user-info">
             <span className="user-name">{user?.name}</span>
-            <span className="user-role">{user?.role === 'gestor' ? 'Gestor' : 'Vendedor'}</span>
+            <span className="user-role">{isGestor ? 'Gestor' : 'Vendedor'}</span>
           </div>
           <button className="btn btn--logout" onClick={handleLogout}>
             Sair

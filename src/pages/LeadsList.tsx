@@ -50,7 +50,7 @@ export default function LeadsList() {
   const [filtroModelo, setFiltroModelo] = useState('');
   const [filtroPagamento, setFiltroPagamento] = useState('');
   const [filtroCidade, setFiltroCidade] = useState('');
-  const [filtroPeriodo, setFiltroPeriodo] = useState<string>('30');
+  const [filtroPeriodo, setFiltroPeriodo] = useState<string>('');
   const [somenteSemContato, setSomenteSemContato] = useState(false);
   const [somenteSemVendedor, setSomenteSemVendedor] = useState(false);
   const [busca, setBusca] = useState('');
@@ -269,7 +269,7 @@ export default function LeadsList() {
     setFiltroModelo('');
     setFiltroPagamento('');
     setFiltroCidade('');
-    setFiltroPeriodo('30');
+    setFiltroPeriodo('');
     setSomenteSemContato(false);
     setSomenteSemVendedor(false);
     setBusca('');
